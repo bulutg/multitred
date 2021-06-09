@@ -3,6 +3,7 @@
 //
 
 #include "ThreadedTCPServerKeepClientAlive.h"
+#include <sys/wait.h>
 
 void ThreadedTCPServerKeepClientAlive::runClientChecker(void *obj_param) {
     ThreadedTCPServerKeepClientAlive *tcpServer = ((ThreadedTCPServerKeepClientAlive *) obj_param);
@@ -50,15 +51,15 @@ bool ThreadedTCPServerKeepClientAlive::start() {
 bool ThreadedTCPServerKeepClientAlive::stop() {
     ThreadedTCPServer::stop();
     (void) pthread_join(_timer_thread, nullptr);
+    waitpid(this->child_pid, NULL, 0);
     return false;
 }
 
 bool ThreadedTCPServerKeepClientAlive::startClient() {
-    pid_t child_pid;
 
-    child_pid = fork();
+    this->child_pid = fork();
 
-    char* appName = (char*) "/Users/bulut/CLionProjects/siyah1/siyah1";
+    char* appName = (char*) "/home/pi/tredmred/siyah1";
 
     char* argv[] = {appName, NULL};
 

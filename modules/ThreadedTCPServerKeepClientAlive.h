@@ -27,6 +27,8 @@ private:
 
     static void runClientChecker(void *obj_param);
 
+    pid_t child_pid;
+
     int timer;
 };
 

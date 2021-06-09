@@ -92,6 +92,8 @@ int ThreadedTCPServer::handleServerListen() {
             printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
             FD_ZERO(&rfds);
             FD_SET(this->socketFD, &rfds);
+            tv.tv_sec = (long) this->acceptTimeout;
+            tv.tv_usec = 0;
             iResult = select(this->socketFD + 1, &rfds, (fd_set *) 0, (fd_set *) 0, &tv);
         }
     }
