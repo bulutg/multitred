@@ -2,15 +2,15 @@
 // Created by Bulut Gözübüyük on 8.06.2021.
 //
 
-#ifndef SIYAH1_THREADEDTCPSERVERKEEPPARTNERALIVE_H
-#define SIYAH1_THREADEDTCPSERVERKEEPPARTNERALIVE_H
+#ifndef SIYAH1_THREADEDTCPSERVERKEEPPARTNERSALIVE_H
+#define SIYAH1_THREADEDTCPSERVERKEEPPARTNERSALIVE_H
 
 
 #include "ThreadedTCPServer.h"
 
-class ThreadedTCPServerKeepPartnerAlive : public ThreadedTCPServer {
+class ThreadedTCPServerKeepPartnersAlive : public ThreadedTCPServer {
 public:
-    ThreadedTCPServerKeepPartnerAlive(int id, int port, std::string path);
+    ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path);
 
     bool start() override;
 
@@ -32,7 +32,11 @@ private:
     pid_t child_pid;
 
     int timer;
+
+    std::vector<pid_t> partner_pids;
+    std::vector<int> partner_timers;
+
 };
 
 
-#endif //SIYAH1_THREADEDTCPSERVERKEEPPARTNERALIVE_H
+#endif //SIYAH1_THREADEDTCPSERVERKEEPPARTNERSALIVE_H

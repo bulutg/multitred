@@ -155,200 +155,227 @@ Partner/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/build
 .PHONY : Partner/fast
 
-Partner.o: Partner.cpp.o
+PartnerMain.o: PartnerMain.cpp.o
 
-.PHONY : Partner.o
-
-# target to build an object file
-Partner.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/Partner.cpp.o
-.PHONY : Partner.cpp.o
-
-Partner.i: Partner.cpp.i
-
-.PHONY : Partner.i
-
-# target to preprocess a source file
-Partner.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/Partner.cpp.i
-.PHONY : Partner.cpp.i
-
-Partner.s: Partner.cpp.s
-
-.PHONY : Partner.s
-
-# target to generate assembly for a file
-Partner.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/Partner.cpp.s
-.PHONY : Partner.cpp.s
-
-Supervisor.o: Supervisor.cpp.o
-
-.PHONY : Supervisor.o
+.PHONY : PartnerMain.o
 
 # target to build an object file
-Supervisor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/Supervisor.cpp.o
-.PHONY : Supervisor.cpp.o
+PartnerMain.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/PartnerMain.cpp.o
+.PHONY : PartnerMain.cpp.o
 
-Supervisor.i: Supervisor.cpp.i
+PartnerMain.i: PartnerMain.cpp.i
 
-.PHONY : Supervisor.i
+.PHONY : PartnerMain.i
 
 # target to preprocess a source file
-Supervisor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/Supervisor.cpp.i
-.PHONY : Supervisor.cpp.i
+PartnerMain.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/PartnerMain.cpp.i
+.PHONY : PartnerMain.cpp.i
 
-Supervisor.s: Supervisor.cpp.s
+PartnerMain.s: PartnerMain.cpp.s
 
-.PHONY : Supervisor.s
+.PHONY : PartnerMain.s
 
 # target to generate assembly for a file
-Supervisor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/Supervisor.cpp.s
-.PHONY : Supervisor.cpp.s
+PartnerMain.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/PartnerMain.cpp.s
+.PHONY : PartnerMain.cpp.s
 
-modules/JsonThreadedTCPServer.o: modules/JsonThreadedTCPServer.cpp.o
+SupervisorMain.o: SupervisorMain.cpp.o
 
-.PHONY : modules/JsonThreadedTCPServer.o
+.PHONY : SupervisorMain.o
 
 # target to build an object file
-modules/JsonThreadedTCPServer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/JsonThreadedTCPServer.cpp.o
-.PHONY : modules/JsonThreadedTCPServer.cpp.o
+SupervisorMain.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/SupervisorMain.cpp.o
+.PHONY : SupervisorMain.cpp.o
 
-modules/JsonThreadedTCPServer.i: modules/JsonThreadedTCPServer.cpp.i
+SupervisorMain.i: SupervisorMain.cpp.i
 
-.PHONY : modules/JsonThreadedTCPServer.i
+.PHONY : SupervisorMain.i
 
 # target to preprocess a source file
-modules/JsonThreadedTCPServer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/JsonThreadedTCPServer.cpp.i
-.PHONY : modules/JsonThreadedTCPServer.cpp.i
+SupervisorMain.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/SupervisorMain.cpp.i
+.PHONY : SupervisorMain.cpp.i
 
-modules/JsonThreadedTCPServer.s: modules/JsonThreadedTCPServer.cpp.s
+SupervisorMain.s: SupervisorMain.cpp.s
 
-.PHONY : modules/JsonThreadedTCPServer.s
+.PHONY : SupervisorMain.s
 
 # target to generate assembly for a file
-modules/JsonThreadedTCPServer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/JsonThreadedTCPServer.cpp.s
-.PHONY : modules/JsonThreadedTCPServer.cpp.s
+SupervisorMain.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/SupervisorMain.cpp.s
+.PHONY : SupervisorMain.cpp.s
 
-modules/ThreadedModule.o: modules/ThreadedModule.cpp.o
+src/Supervisor.o: src/Supervisor.cpp.o
 
-.PHONY : modules/ThreadedModule.o
+.PHONY : src/Supervisor.o
 
 # target to build an object file
-modules/ThreadedModule.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedModule.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedModule.cpp.o
-.PHONY : modules/ThreadedModule.cpp.o
+src/Supervisor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/Supervisor.cpp.o
+.PHONY : src/Supervisor.cpp.o
 
-modules/ThreadedModule.i: modules/ThreadedModule.cpp.i
+src/Supervisor.i: src/Supervisor.cpp.i
 
-.PHONY : modules/ThreadedModule.i
+.PHONY : src/Supervisor.i
 
 # target to preprocess a source file
-modules/ThreadedModule.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedModule.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedModule.cpp.i
-.PHONY : modules/ThreadedModule.cpp.i
+src/Supervisor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/Supervisor.cpp.i
+.PHONY : src/Supervisor.cpp.i
 
-modules/ThreadedModule.s: modules/ThreadedModule.cpp.s
+src/Supervisor.s: src/Supervisor.cpp.s
 
-.PHONY : modules/ThreadedModule.s
+.PHONY : src/Supervisor.s
 
 # target to generate assembly for a file
-modules/ThreadedModule.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedModule.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedModule.cpp.s
-.PHONY : modules/ThreadedModule.cpp.s
+src/Supervisor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/Supervisor.cpp.s
+.PHONY : src/Supervisor.cpp.s
 
-modules/ThreadedTCPClient.o: modules/ThreadedTCPClient.cpp.o
+src/modules/JsonThreadedTCPServer.o: src/modules/JsonThreadedTCPServer.cpp.o
 
-.PHONY : modules/ThreadedTCPClient.o
+.PHONY : src/modules/JsonThreadedTCPServer.o
 
 # target to build an object file
-modules/ThreadedTCPClient.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedTCPClient.cpp.o
-.PHONY : modules/ThreadedTCPClient.cpp.o
+src/modules/JsonThreadedTCPServer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/JsonThreadedTCPServer.cpp.o
+.PHONY : src/modules/JsonThreadedTCPServer.cpp.o
 
-modules/ThreadedTCPClient.i: modules/ThreadedTCPClient.cpp.i
+src/modules/JsonThreadedTCPServer.i: src/modules/JsonThreadedTCPServer.cpp.i
 
-.PHONY : modules/ThreadedTCPClient.i
+.PHONY : src/modules/JsonThreadedTCPServer.i
 
 # target to preprocess a source file
-modules/ThreadedTCPClient.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedTCPClient.cpp.i
-.PHONY : modules/ThreadedTCPClient.cpp.i
+src/modules/JsonThreadedTCPServer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/JsonThreadedTCPServer.cpp.i
+.PHONY : src/modules/JsonThreadedTCPServer.cpp.i
 
-modules/ThreadedTCPClient.s: modules/ThreadedTCPClient.cpp.s
+src/modules/JsonThreadedTCPServer.s: src/modules/JsonThreadedTCPServer.cpp.s
 
-.PHONY : modules/ThreadedTCPClient.s
+.PHONY : src/modules/JsonThreadedTCPServer.s
 
 # target to generate assembly for a file
-modules/ThreadedTCPClient.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedTCPClient.cpp.s
-.PHONY : modules/ThreadedTCPClient.cpp.s
+src/modules/JsonThreadedTCPServer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/JsonThreadedTCPServer.cpp.s
+.PHONY : src/modules/JsonThreadedTCPServer.cpp.s
 
-modules/ThreadedTCPServer.o: modules/ThreadedTCPServer.cpp.o
+src/modules/ThreadedModule.o: src/modules/ThreadedModule.cpp.o
 
-.PHONY : modules/ThreadedTCPServer.o
+.PHONY : src/modules/ThreadedModule.o
 
 # target to build an object file
-modules/ThreadedTCPServer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedTCPServer.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedTCPServer.cpp.o
-.PHONY : modules/ThreadedTCPServer.cpp.o
+src/modules/ThreadedModule.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedModule.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedModule.cpp.o
+.PHONY : src/modules/ThreadedModule.cpp.o
 
-modules/ThreadedTCPServer.i: modules/ThreadedTCPServer.cpp.i
+src/modules/ThreadedModule.i: src/modules/ThreadedModule.cpp.i
 
-.PHONY : modules/ThreadedTCPServer.i
+.PHONY : src/modules/ThreadedModule.i
 
 # target to preprocess a source file
-modules/ThreadedTCPServer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedTCPServer.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedTCPServer.cpp.i
-.PHONY : modules/ThreadedTCPServer.cpp.i
+src/modules/ThreadedModule.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedModule.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedModule.cpp.i
+.PHONY : src/modules/ThreadedModule.cpp.i
 
-modules/ThreadedTCPServer.s: modules/ThreadedTCPServer.cpp.s
+src/modules/ThreadedModule.s: src/modules/ThreadedModule.cpp.s
 
-.PHONY : modules/ThreadedTCPServer.s
+.PHONY : src/modules/ThreadedModule.s
 
 # target to generate assembly for a file
-modules/ThreadedTCPServer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedTCPServer.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/modules/ThreadedTCPServer.cpp.s
-.PHONY : modules/ThreadedTCPServer.cpp.s
+src/modules/ThreadedModule.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedModule.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedModule.cpp.s
+.PHONY : src/modules/ThreadedModule.cpp.s
 
-modules/ThreadedTCPServerKeepPartnerAlive.o: modules/ThreadedTCPServerKeepPartnerAlive.cpp.o
+src/modules/ThreadedTCPClient.o: src/modules/ThreadedTCPClient.cpp.o
 
-.PHONY : modules/ThreadedTCPServerKeepPartnerAlive.o
+.PHONY : src/modules/ThreadedTCPClient.o
 
 # target to build an object file
-modules/ThreadedTCPServerKeepPartnerAlive.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedTCPServerKeepPartnerAlive.cpp.o
-.PHONY : modules/ThreadedTCPServerKeepPartnerAlive.cpp.o
+src/modules/ThreadedTCPClient.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedTCPClient.cpp.o
+.PHONY : src/modules/ThreadedTCPClient.cpp.o
 
-modules/ThreadedTCPServerKeepPartnerAlive.i: modules/ThreadedTCPServerKeepPartnerAlive.cpp.i
+src/modules/ThreadedTCPClient.i: src/modules/ThreadedTCPClient.cpp.i
 
-.PHONY : modules/ThreadedTCPServerKeepPartnerAlive.i
+.PHONY : src/modules/ThreadedTCPClient.i
 
 # target to preprocess a source file
-modules/ThreadedTCPServerKeepPartnerAlive.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedTCPServerKeepPartnerAlive.cpp.i
-.PHONY : modules/ThreadedTCPServerKeepPartnerAlive.cpp.i
+src/modules/ThreadedTCPClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedTCPClient.cpp.i
+.PHONY : src/modules/ThreadedTCPClient.cpp.i
 
-modules/ThreadedTCPServerKeepPartnerAlive.s: modules/ThreadedTCPServerKeepPartnerAlive.cpp.s
+src/modules/ThreadedTCPClient.s: src/modules/ThreadedTCPClient.cpp.s
 
-.PHONY : modules/ThreadedTCPServerKeepPartnerAlive.s
+.PHONY : src/modules/ThreadedTCPClient.s
 
 # target to generate assembly for a file
-modules/ThreadedTCPServerKeepPartnerAlive.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/modules/ThreadedTCPServerKeepPartnerAlive.cpp.s
-.PHONY : modules/ThreadedTCPServerKeepPartnerAlive.cpp.s
+src/modules/ThreadedTCPClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedTCPClient.cpp.s
+.PHONY : src/modules/ThreadedTCPClient.cpp.s
+
+src/modules/ThreadedTCPServer.o: src/modules/ThreadedTCPServer.cpp.o
+
+.PHONY : src/modules/ThreadedTCPServer.o
+
+# target to build an object file
+src/modules/ThreadedTCPServer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedTCPServer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedTCPServer.cpp.o
+.PHONY : src/modules/ThreadedTCPServer.cpp.o
+
+src/modules/ThreadedTCPServer.i: src/modules/ThreadedTCPServer.cpp.i
+
+.PHONY : src/modules/ThreadedTCPServer.i
+
+# target to preprocess a source file
+src/modules/ThreadedTCPServer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedTCPServer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedTCPServer.cpp.i
+.PHONY : src/modules/ThreadedTCPServer.cpp.i
+
+src/modules/ThreadedTCPServer.s: src/modules/ThreadedTCPServer.cpp.s
+
+.PHONY : src/modules/ThreadedTCPServer.s
+
+# target to generate assembly for a file
+src/modules/ThreadedTCPServer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedTCPServer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Partner.dir/build.make CMakeFiles/Partner.dir/src/modules/ThreadedTCPServer.cpp.s
+.PHONY : src/modules/ThreadedTCPServer.cpp.s
+
+src/modules/ThreadedTCPServerKeepPartnersAlive.o: src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.o
+
+.PHONY : src/modules/ThreadedTCPServerKeepPartnersAlive.o
+
+# target to build an object file
+src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.o
+.PHONY : src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.o
+
+src/modules/ThreadedTCPServerKeepPartnersAlive.i: src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.i
+
+.PHONY : src/modules/ThreadedTCPServerKeepPartnersAlive.i
+
+# target to preprocess a source file
+src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.i
+.PHONY : src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.i
+
+src/modules/ThreadedTCPServerKeepPartnersAlive.s: src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.s
+
+.PHONY : src/modules/ThreadedTCPServerKeepPartnersAlive.s
+
+# target to generate assembly for a file
+src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Supervisor.dir/build.make CMakeFiles/Supervisor.dir/src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.s
+.PHONY : src/modules/ThreadedTCPServerKeepPartnersAlive.cpp.s
 
 # Help Target
 help:
@@ -360,27 +387,30 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Partner"
 	@echo "... Supervisor"
-	@echo "... Partner.o"
-	@echo "... Partner.i"
-	@echo "... Partner.s"
-	@echo "... Supervisor.o"
-	@echo "... Supervisor.i"
-	@echo "... Supervisor.s"
-	@echo "... modules/JsonThreadedTCPServer.o"
-	@echo "... modules/JsonThreadedTCPServer.i"
-	@echo "... modules/JsonThreadedTCPServer.s"
-	@echo "... modules/ThreadedModule.o"
-	@echo "... modules/ThreadedModule.i"
-	@echo "... modules/ThreadedModule.s"
-	@echo "... modules/ThreadedTCPClient.o"
-	@echo "... modules/ThreadedTCPClient.i"
-	@echo "... modules/ThreadedTCPClient.s"
-	@echo "... modules/ThreadedTCPServer.o"
-	@echo "... modules/ThreadedTCPServer.i"
-	@echo "... modules/ThreadedTCPServer.s"
-	@echo "... modules/ThreadedTCPServerKeepPartnerAlive.o"
-	@echo "... modules/ThreadedTCPServerKeepPartnerAlive.i"
-	@echo "... modules/ThreadedTCPServerKeepPartnerAlive.s"
+	@echo "... PartnerMain.o"
+	@echo "... PartnerMain.i"
+	@echo "... PartnerMain.s"
+	@echo "... SupervisorMain.o"
+	@echo "... SupervisorMain.i"
+	@echo "... SupervisorMain.s"
+	@echo "... src/Supervisor.o"
+	@echo "... src/Supervisor.i"
+	@echo "... src/Supervisor.s"
+	@echo "... src/modules/JsonThreadedTCPServer.o"
+	@echo "... src/modules/JsonThreadedTCPServer.i"
+	@echo "... src/modules/JsonThreadedTCPServer.s"
+	@echo "... src/modules/ThreadedModule.o"
+	@echo "... src/modules/ThreadedModule.i"
+	@echo "... src/modules/ThreadedModule.s"
+	@echo "... src/modules/ThreadedTCPClient.o"
+	@echo "... src/modules/ThreadedTCPClient.i"
+	@echo "... src/modules/ThreadedTCPClient.s"
+	@echo "... src/modules/ThreadedTCPServer.o"
+	@echo "... src/modules/ThreadedTCPServer.i"
+	@echo "... src/modules/ThreadedTCPServer.s"
+	@echo "... src/modules/ThreadedTCPServerKeepPartnersAlive.o"
+	@echo "... src/modules/ThreadedTCPServerKeepPartnersAlive.i"
+	@echo "... src/modules/ThreadedTCPServerKeepPartnersAlive.s"
 .PHONY : help
 
 

@@ -2,11 +2,11 @@
 // Created by Bulut Gözübüyük on 8.06.2021.
 //
 
-#include "ThreadedTCPServerKeepPartnerAlive.h"
+#include "ThreadedTCPServerKeepPartnersAlive.h"
 
 
-void ThreadedTCPServerKeepPartnerAlive::runPartnerChecker(void *obj_param) {
-    ThreadedTCPServerKeepPartnerAlive *tcpServer = ((ThreadedTCPServerKeepPartnerAlive *) obj_param);
+void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
+    ThreadedTCPServerKeepPartnersAlive *tcpServer = ((ThreadedTCPServerKeepPartnersAlive *) obj_param);
     while(tcpServer->loop){
         if (tcpServer->timer >= 11){
             printf(RED "no response from partner, deploying partner again..\n" RESET);
@@ -24,13 +24,13 @@ void ThreadedTCPServerKeepPartnerAlive::runPartnerChecker(void *obj_param) {
     }
 }
 
-ThreadedTCPServerKeepPartnerAlive::ThreadedTCPServerKeepPartnerAlive(int id, int port, std::string path) : ThreadedTCPServer(id, port) {
+ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path) : ThreadedTCPServer(id, port) {
     pthread_mutex_init(&(this->_timer_mutex), NULL);
     this->timer = 0;
     this->partner_executable_path = std::move(path);
 }
 
-int ThreadedTCPServerKeepPartnerAlive::handleReceivedString(std::string strRecv, int bytesRecv) {
+int ThreadedTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv, int bytesRecv) {
     strRecv.erase(std::remove(strRecv.begin(), strRecv.end(), '\n'), strRecv.end());
     printf(GREEN "KCA: Server Received: %s Loop %d\n" RESET, strRecv.c_str(), this->loop);
 
@@ -44,19 +44,19 @@ int ThreadedTCPServerKeepPartnerAlive::handleReceivedString(std::string strRecv,
     return 0;
 }
 
-bool ThreadedTCPServerKeepPartnerAlive::start() {
+bool ThreadedTCPServerKeepPartnersAlive::start() {
     ThreadedTCPServer::start();
     return pthread_create(&_timer_thread, NULL, reinterpret_cast<void *(*)(void *)>(runPartnerChecker), this);
 }
 
-bool ThreadedTCPServerKeepPartnerAlive::stop() {
+bool ThreadedTCPServerKeepPartnersAlive::stop() {
     ThreadedTCPServer::stop();
     (void) pthread_join(_timer_thread, nullptr);
     waitpid(this->child_pid, NULL, 0);
     return false;
 }
 
-bool ThreadedTCPServerKeepPartnerAlive::startPartner() {
+bool ThreadedTCPServerKeepPartnersAlive::startPartner() {
 
     this->child_pid = fork();
 
@@ -65,6 +65,9 @@ bool ThreadedTCPServerKeepPartnerAlive::startPartner() {
     char* argv[] = {appName, NULL};
 
     if (child_pid == 0) {
+        // add pid to list
+        partner_pids.push_back(child_pid);
+
         // deploy partner here
         execvp(appName, argv);
         fprintf(stderr, "an error occurred in execvp\n");
@@ -73,4 +76,3 @@ bool ThreadedTCPServerKeepPartnerAlive::startPartner() {
 
     return false;
 }
-

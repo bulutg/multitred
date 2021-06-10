@@ -1,8 +1,8 @@
 #include <unistd.h>
 #include <csignal>
 #include <string>
-#include "modules/JsonThreadedTCPServer.h"
-#include "modules/ThreadedTCPClient.h"
+#include "src/modules/JsonThreadedTCPServer.h"
+#include "src/modules/ThreadedTCPClient.h"
 
 JsonThreadedTCPServer* server;
 ThreadedTCPClient* tcp_client;

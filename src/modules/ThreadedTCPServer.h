@@ -25,8 +25,6 @@ public:
 
 private:
 
-    int server_port;
-
     int handleServerListen();
 
     int handleReceiveLoop();
@@ -38,6 +36,8 @@ private:
     std::string currentFileName;
 
 //    std::ofstream currentFileStream;
+protected:
+    int server_port;
 };
 
 
