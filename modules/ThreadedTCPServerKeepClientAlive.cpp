@@ -24,9 +24,10 @@ void ThreadedTCPServerKeepClientAlive::runClientChecker(void *obj_param) {
     }
 }
 
-ThreadedTCPServerKeepClientAlive::ThreadedTCPServerKeepClientAlive(int id, int port) : ThreadedTCPServer(id, port) {
+ThreadedTCPServerKeepClientAlive::ThreadedTCPServerKeepClientAlive(int id, int port, std::string path) : ThreadedTCPServer(id, port) {
     pthread_mutex_init(&(this->_timer_mutex), NULL);
     this->timer = 0;
+    this->partner_executable_path = path;
 }
 
 int ThreadedTCPServerKeepClientAlive::handleReceivedString(std::string strRecv, int bytesRecv) {
@@ -59,7 +60,7 @@ bool ThreadedTCPServerKeepClientAlive::startClient() {
 
     this->child_pid = fork();
 
-    char* appName = (char*) "/home/pi/tredmred/siyah1";
+    char* appName = const_cast<char *>((this->partner_executable_path).c_str());
 
     char* argv[] = {appName, NULL};
 

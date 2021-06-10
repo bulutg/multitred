@@ -11,13 +11,22 @@ void handle(int signum){
     g_running = 0;
 }
 
-int main() {
+int main(int argc,char* argv[]) {
+    if (argc != 3) {
+        printf("Supervisor <N> <pX>\n");
+        printf("<N> is the number of Partners\n");
+        printf("<pX> path of Partner executable\n");
+        return 0;
+    }
+
+    int N = atoi(argv[1]);
+
+    std::string partner_executable_path = argv[2];
 
     //variable to store calling function's process id
     pid_t process_id;
     //variable to store parent function's process id
     pid_t p_process_id;
-
     //getpid() - will return process id of calling function
     process_id = getpid();
     //getppid() - will return process id of parent function
@@ -31,7 +40,7 @@ int main() {
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
-    server = new ThreadedTCPServerKeepClientAlive(0, 54002);
+    server = new ThreadedTCPServerKeepClientAlive(0, 54002, partner_executable_path);
 
     server->start();
 

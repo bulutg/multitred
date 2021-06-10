@@ -10,7 +10,7 @@
 
 class ThreadedTCPServerKeepClientAlive : public ThreadedTCPServer {
 public:
-    ThreadedTCPServerKeepClientAlive(int id, int port);
+    ThreadedTCPServerKeepClientAlive(int id, int port, std::string path);
 
     bool start() override;
 
@@ -26,6 +26,8 @@ private:
     pthread_mutex_t _timer_mutex;
 
     static void runClientChecker(void *obj_param);
+
+    std::string partner_executable_path;
 
     pid_t child_pid;
 
