@@ -15,6 +15,7 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <fstream>
+#include <sys/wait.h>
 
 #include "components/SafeQueue.h"
 #include "components/CircularBuffer.h"

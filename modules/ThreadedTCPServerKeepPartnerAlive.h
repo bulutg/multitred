@@ -2,15 +2,15 @@
 // Created by Bulut Gözübüyük on 8.06.2021.
 //
 
-#ifndef SIYAH1_THREADEDTCPSERVERKEEPCLIENTALIVE_H
-#define SIYAH1_THREADEDTCPSERVERKEEPCLIENTALIVE_H
+#ifndef SIYAH1_THREADEDTCPSERVERKEEPPARTNERALIVE_H
+#define SIYAH1_THREADEDTCPSERVERKEEPPARTNERALIVE_H
 
 
 #include "ThreadedTCPServer.h"
 
-class ThreadedTCPServerKeepClientAlive : public ThreadedTCPServer {
+class ThreadedTCPServerKeepPartnerAlive : public ThreadedTCPServer {
 public:
-    ThreadedTCPServerKeepClientAlive(int id, int port, std::string path);
+    ThreadedTCPServerKeepPartnerAlive(int id, int port, std::string path);
 
     bool start() override;
 
@@ -18,14 +18,14 @@ public:
 
     int handleReceivedString(std::string strRecv, int bytesRecv) override;
 
-    bool startClient();
+    bool startPartner();
 
 private:
     pthread_t _timer_thread;
 
     pthread_mutex_t _timer_mutex;
 
-    static void runClientChecker(void *obj_param);
+    static void runPartnerChecker(void *obj_param);
 
     std::string partner_executable_path;
 
@@ -35,4 +35,4 @@ private:
 };
 
 
-#endif //SIYAH1_THREADEDTCPSERVERKEEPCLIENTALIVE_H
+#endif //SIYAH1_THREADEDTCPSERVERKEEPPARTNERALIVE_H

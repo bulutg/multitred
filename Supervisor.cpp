@@ -1,9 +1,9 @@
 #include <unistd.h>
 #include <csignal>
 #include <string>
-#include "modules/ThreadedTCPServerKeepClientAlive.h"
+#include "modules/ThreadedTCPServerKeepPartnerAlive.h"
 
-ThreadedTCPServerKeepClientAlive* server;
+ThreadedTCPServerKeepPartnerAlive* server;
 
 sig_atomic_t volatile g_running = 1;
 
@@ -40,7 +40,7 @@ int main(int argc,char* argv[]) {
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
-    server = new ThreadedTCPServerKeepClientAlive(0, 54002, partner_executable_path);
+    server = new ThreadedTCPServerKeepPartnerAlive(0, 54002, partner_executable_path);
 
     server->start();
 
