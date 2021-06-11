@@ -16,6 +16,7 @@
 #include <cstring>
 #include <fstream>
 #include <sys/wait.h>
+#include <list>
 
 #include "components/SafeQueue.h"
 #include "components/CircularBuffer.h"
@@ -66,7 +67,7 @@ private:
 protected:
     int loop;
 
-    int socketFD;
+    int master_socketFD;
 
     pthread_t _thread;
 

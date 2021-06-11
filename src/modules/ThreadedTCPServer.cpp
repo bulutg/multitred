@@ -4,7 +4,7 @@
 
 #include "ThreadedTCPServer.h"
 
-ThreadedTCPServer::ThreadedTCPServer(int id, int port) : ThreadedModule(id) , server_port(port) {
+ThreadedTCPServer::ThreadedTCPServer(int id, int port) : ThreadedModule(id), server_port(port) {
     this->acceptTimeout = 5;
 }
 
@@ -64,7 +64,7 @@ int ThreadedTCPServer::handleServerListen() {
         max_fd = this->master_socketFD;
 
         std::list<int>::iterator its;
-        for (its = client_socket_fds.begin(); its != client_socket_fds.end(); ++its){
+        for (its = client_socket_fds.begin(); its != client_socket_fds.end(); ++its) {
             int fd = *its;
             printf("Client fd: %d\n", fd);
             if (fd > 0) FD_SET(fd, &read_fds);
@@ -87,67 +87,40 @@ int ThreadedTCPServer::handleServerListen() {
             }
             char buffer[1025];
 
-
             std::list<int>::iterator it2 = (this->client_socket_fds).begin();
-            while (it2 != (this->client_socket_fds).end()){
+            while (it2 != (this->client_socket_fds).end()) {
                 int fd = *it2;
                 printf("fd: %d\n", fd);
 
-
-                if (FD_ISSET( fd , &read_fds))
-                {
+                if (FD_ISSET(fd, &read_fds)) {
                     //Check if it was for closing , and also read the incoming message
-                    int valread = read( fd , buffer, 1024);
+                    int valread = read(fd, buffer, 1024);
                     printf("valread %d\n", valread);
 
-                    if (valread == 0){
+                    if (valread == 0) {
                         //Somebody disconnected , get his details and print
-                        getpeername(fd , (struct sockaddr*)&addr , \
-                        (socklen_t*)&addrSize);
-                        printf("Host disconnected , ip %s , port %d \n" ,
-                               inet_ntoa(addr.sin_addr) , ntohs(addr.sin_port));
+                        getpeername(fd, (struct sockaddr *) &addr, \
+                        (socklen_t *) &addrSize);
+                        printf("Host disconnected , ip %s , port %d \n",
+                               inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
                         //Close the socket and mark as 0 in list for reuse
-                        close( fd );
+                        close(fd);
                         it2 = (this->client_socket_fds).erase(it2);
                     }
-
+                    else {
                         //Echo back the message that came in
-                    else{
                         //set the string terminating NULL byte on the end
                         //of the data read
                         printf("recv: %s\n", buffer);
                         buffer[valread] = '\0';
-                        send(fd , buffer , strlen(buffer) , 0 );
+                        send(fd, buffer, strlen(buffer), 0);
                     }
                 }
                 it2++;
             }
 
         } else printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
-    }
-    return 0;
-}
-
-int ThreadedTCPServer::handleReceiveLoop() {
-    while (this->loop) {
-        // Clear buffer
-        memset(this->recv_buffer, 0, 4096);
-
-        int bytesRecv = recv(this->clientSocket, this->recv_buffer, RECV_BUFFER_SIZE, 0);
-        if (bytesRecv == -1) {
-            std::cerr << "There was a connecetion issue." << std::endl;
-            break;
-        } else if (bytesRecv == 0) {
-            std::cerr << "Client disconnected." << std::endl;
-            break;
-        }
-
-        std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
-
-        this->handleReceivedString(strRecv, bytesRecv);
-        //resend msg (echo)
-        send(clientSocket, this->recv_buffer, bytesRecv + 1,0);
     }
     return 0;
 }

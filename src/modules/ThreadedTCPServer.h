@@ -27,8 +27,6 @@ private:
 
     int handleServerListen();
 
-    int handleReceiveLoop();
-
     int clientSocket{};
 
     int acceptTimeout;

@@ -33,14 +33,14 @@ int main(int argc,char* argv[]) {
     p_process_id = getppid();
 
     //printing the process ids
-    printf("Veli process id: %d\n",process_id);
-    printf("The process id of parent function: %d\n",p_process_id);
+    printf("Supervisor: process id: %d\n",process_id);
+    printf("Supervisor: process id of parent function: %d\n",p_process_id);
 
     struct sigaction sa{};
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
-    server = new ThreadedTCPServerKeepPartnersAlive(0, 54002, partner_executable_path);
+    server = new ThreadedTCPServerKeepPartnersAlive(0, 54010, partner_executable_path, 3);
 
     server->start();
 

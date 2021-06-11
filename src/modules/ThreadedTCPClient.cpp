@@ -8,53 +8,60 @@ ThreadedTCPClient::ThreadedTCPClient(int id, int clientPort) : ThreadedModule(id
 
 void ThreadedTCPClient::runClient(void *obj_param) {
     ThreadedTCPClient *tcpClient = ((ThreadedTCPClient *) obj_param);
+    pid_t process_id = getpid();
 
 //    struct timeval tv;
 //    tv.tv_sec = (long) 5;
 //    tv.tv_usec = 0;
 
-    tcpClient->socketFD = socket(AF_INET, SOCK_STREAM, 0);
-    if (tcpClient->socketFD != -1) {
-        printf(YELLOW "SOCKET CREATED!\n" RESET);
+    tcpClient->master_socketFD = socket(AF_INET, SOCK_STREAM, 0);
+    if (tcpClient->master_socketFD != -1) {
+        std::string alert = "Client:" + std::to_string(process_id) +" SOCKET CREATED!\n";
+        printf(YELLOW);
+        printf("%s", alert.c_str());
+        printf(RESET);
         sockaddr_in hint{};
         hint.sin_family = AF_INET;
         hint.sin_port = htons(tcpClient->client_port);
         inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
 
-        std::string userInput = "heartbeat";
+        //variable to store calling function's process id
+
+
+        std::string userInput = "heartbeat" + std::to_string(process_id);
 
         // Connect to server
 
         do {
 
-            if (connect(tcpClient->socketFD, (sockaddr *) &hint, sizeof(hint)) != -1) {
-                printf(GREEN "Connected!\n" RESET);
+            if (connect(tcpClient->master_socketFD, (sockaddr *) &hint, sizeof(hint)) != -1) {
+                printf(GREEN "Client: Connected!\n" RESET);
 
                 do {
 //                std::cout << "> ";
 //                getline(std::cin, userInput);
 
-                    if (send(tcpClient->socketFD, userInput.c_str(), userInput.size() + 1, 0) != -1) {
+                    if (send(tcpClient->master_socketFD, userInput.c_str(), userInput.size() + 1, 0) != -1) {
                         // wait for response
                         memset(tcpClient->recv_buffer, 0, RECV_BUFFER_SIZE);
 
-                        int bytesRecv = recv(tcpClient->socketFD, tcpClient->recv_buffer, RECV_BUFFER_SIZE, 0);
+                        int bytesRecv = recv(tcpClient->master_socketFD, tcpClient->recv_buffer, RECV_BUFFER_SIZE, 0);
                         if (bytesRecv != -1) {
 
                             std::string strRecv = std::string(tcpClient->recv_buffer, bytesRecv);
 
                             printf("SERVER> %s\n", strRecv.c_str());
-                        } else std::cerr << "There was a connecetion issue." << std::endl;
-                    } else printf(RED "Cannot send to server!\n" RESET);
+                        } else std::cerr << "Client: There was a connecetion issue." << std::endl;
+                    } else printf(RED "Client: Cannot send to server!\n" RESET);
                     sleep(5);
                 } while (tcpClient->loop);
             } else {
-                printf(RED "Cannot connect to server! Trying again..., Loop: %d\n" RESET, tcpClient->loop);
+                printf(RED "Client: Cannot connect to server! Trying again..., Loop: %d\n" RESET, tcpClient->loop);
                 sleep(2);
-                tcpClient->socketFD = socket(AF_INET, SOCK_STREAM, 0);
+                tcpClient->master_socketFD = socket(AF_INET, SOCK_STREAM, 0);
             }
         } while (tcpClient->loop);
-    } else printf(RED "Create socket failed!\n" RESET);
+    } else printf(RED "Client: Create socket failed!\n" RESET);
 }
 
 bool ThreadedTCPClient::start() {
@@ -64,7 +71,7 @@ bool ThreadedTCPClient::start() {
 
 bool ThreadedTCPClient::stop() {
     printf("TCP Client Close Called.\n");
-    close(this->socketFD);
+    close(this->master_socketFD);
     printf("Client socket closed.\n");
     return ThreadedModule::stop();
 }
