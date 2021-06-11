@@ -23,20 +23,20 @@ bool ThreadedTCPServer::stop() {
 void ThreadedTCPServer::runServer(void *obj_param) {
     ThreadedTCPServer *tcpServer = ((ThreadedTCPServer *) obj_param);
     // Create Socket
-    tcpServer->socketFD = socket(AF_INET, SOCK_STREAM, 0);
-    if (tcpServer->socketFD != -1) {
+    tcpServer->master_socketFD = socket(AF_INET, SOCK_STREAM, 0);
+    if (tcpServer->master_socketFD != -1) {
         sockaddr_in hint{};
         hint.sin_family = AF_INET;
         hint.sin_port = htons(tcpServer->server_port);
         inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
 
         int enable = 1;
-        if (setsockopt(tcpServer->socketFD, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+        if (setsockopt(tcpServer->master_socketFD, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
             printf("setsockopt(SO_REUSEADDR) failed");
 
-        if (bind(tcpServer->socketFD, (sockaddr *) &hint, sizeof(hint)) != -1) {
+        if (bind(tcpServer->master_socketFD, (sockaddr *) &hint, sizeof(hint)) != -1) {
             printf(GREEN "Bind!\n" RESET);
-            if (listen(tcpServer->socketFD, SOMAXCONN) != -1) {
+            if (listen(tcpServer->master_socketFD, SOMAXCONN) != -1) {
                 tcpServer->handleServerListen();
             } else printf(RED "Cannot listen!\n" RESET);
         } else printf(RED "Cannot bind IP/Port!\n" RESET);
@@ -45,57 +45,86 @@ void ThreadedTCPServer::runServer(void *obj_param) {
 
 int ThreadedTCPServer::handleServerListen() {
     printf(GREEN "Listen!\n" RESET);
-    char host[NI_MAXHOST];
-    char svc[NI_MAXSERV];
-    sockaddr_in client;
-    socklen_t clientSize = sizeof(client);
+    sockaddr_in addr;
+    socklen_t addrSize = sizeof(addr);
 
-    // manage timeout start
-    int iResult;
+    int max_fd, iResult;
+
     struct timeval tv;
-    fd_set rfds;
-    FD_ZERO(&rfds);
-    FD_SET(this->socketFD, &rfds);
-
-    tv.tv_sec = (long) this->acceptTimeout;
-    tv.tv_usec = 0;
+    fd_set read_fds;
 
     printf(YELLOW "Try to accept! loop: %d\n" RESET, this->loop);
-    iResult = select(this->socketFD + 1, &rfds, (fd_set *) 0, (fd_set *) 0, &tv);
-    // manage timeout end
-
     while (this->loop) {
-        if (iResult > 0) {
-            this->clientSocket = accept(this->socketFD, (sockaddr *) &client, &clientSize);
+        tv.tv_sec = (long) this->acceptTimeout;
+        tv.tv_usec = 0;
 
-            if (this->clientSocket != -1) {
-                printf("Accepted clientSocket!\n");
-                close(this->socketFD);
-                memset(host, 0, NI_MAXHOST);
-                memset(svc, 0, NI_MAXSERV);
+        FD_ZERO(&read_fds);
+        FD_SET(this->master_socketFD, &read_fds);
 
-                int result = getnameinfo((sockaddr *) &client, sizeof(client),
-                                         host, NI_MAXHOST,
-                                         svc, NI_MAXSERV, 0);
+        max_fd = this->master_socketFD;
 
-                if (result) printf("%s connected on %s\n", host, svc);
-                else {
-                    inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-                    printf(GREEN "%s connected on %hu\n" RESET, host, ntohs(client.sin_port));
-                    this->handleReceiveLoop();
-                }
-            } else {
-                printf(YELLOW "No client connected, running server again!\n" RESET);
-                runServer(this);
-            }
-        } else {
-            printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
-            FD_ZERO(&rfds);
-            FD_SET(this->socketFD, &rfds);
-            tv.tv_sec = (long) this->acceptTimeout;
-            tv.tv_usec = 0;
-            iResult = select(this->socketFD + 1, &rfds, (fd_set *) 0, (fd_set *) 0, &tv);
+        std::list<int>::iterator its;
+        for (its = client_socket_fds.begin(); its != client_socket_fds.end(); ++its){
+            int fd = *its;
+            printf("Client fd: %d\n", fd);
+            if (fd > 0) FD_SET(fd, &read_fds);
+            if (fd > max_fd) max_fd = fd;
         }
+        iResult = select(max_fd + 1, &read_fds, (fd_set *) 0, (fd_set *) 0, &tv);
+
+        if (iResult > 0) {
+            if (FD_ISSET(this->master_socketFD, &read_fds)) {
+                int new_socket = accept(this->master_socketFD, (sockaddr *) &addr, &addrSize);
+
+                if (new_socket != -1) {
+                    printf("Accepted clientSocket!\n");
+                    printf("New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket,
+                           inet_ntoa(addr.sin_addr), ntohs
+                           (addr.sin_port));
+
+                    (this->client_socket_fds).push_back(new_socket);
+                }
+            }
+            char buffer[1025];
+
+
+            std::list<int>::iterator it2 = (this->client_socket_fds).begin();
+            while (it2 != (this->client_socket_fds).end()){
+                int fd = *it2;
+                printf("fd: %d\n", fd);
+
+
+                if (FD_ISSET( fd , &read_fds))
+                {
+                    //Check if it was for closing , and also read the incoming message
+                    int valread = read( fd , buffer, 1024);
+                    printf("valread %d\n", valread);
+
+                    if (valread == 0){
+                        //Somebody disconnected , get his details and print
+                        getpeername(fd , (struct sockaddr*)&addr , \
+                        (socklen_t*)&addrSize);
+                        printf("Host disconnected , ip %s , port %d \n" ,
+                               inet_ntoa(addr.sin_addr) , ntohs(addr.sin_port));
+
+                        //Close the socket and mark as 0 in list for reuse
+                        close( fd );
+                        it2 = (this->client_socket_fds).erase(it2);
+                    }
+
+                        //Echo back the message that came in
+                    else{
+                        //set the string terminating NULL byte on the end
+                        //of the data read
+                        printf("recv: %s\n", buffer);
+                        buffer[valread] = '\0';
+                        send(fd , buffer , strlen(buffer) , 0 );
+                    }
+                }
+                it2++;
+            }
+
+        } else printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
     }
     return 0;
 }

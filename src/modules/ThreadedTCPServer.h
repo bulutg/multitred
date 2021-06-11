@@ -35,6 +35,8 @@ private:
 
     std::string currentFileName;
 
+    std::list<int> client_socket_fds;
+
 //    std::ofstream currentFileStream;
 protected:
     int server_port;
