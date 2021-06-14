@@ -40,7 +40,7 @@ void ThreadedTCPClient::runClient(void *obj_param) {
 
                 do {
                     if (send(tcpClient->master_socketFD, userInput.c_str(), userInput.size() + 1, 0) != -1) {
-                        printf(GREEN "Client%sSent> %s\n" RESET, client_pid.c_str(),  userInput.c_str());
+                        
                         // wait for response
                         memset(tcpClient->recv_buffer, 0, RECV_BUFFER_SIZE);
 
