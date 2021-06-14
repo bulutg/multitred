@@ -7,7 +7,7 @@
 
 
 #include "ThreadedModule.h"
-#include "helpers/ParseHelper.h"
+#include "../helpers/ParseHelper.h"
 
 class ThreadedTCPServer : public ThreadedModule {
 public:
@@ -27,15 +27,11 @@ private:
 
     int handleServerListen();
 
-    int clientSocket{};
-
     int acceptTimeout;
 
     std::string currentFileName;
 
     std::list<int> client_socket_fds;
-
-//    std::ofstream currentFileStream;
 protected:
     int server_port;
 };

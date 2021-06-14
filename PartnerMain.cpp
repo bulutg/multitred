@@ -1,8 +1,8 @@
 #include <unistd.h>
 #include <csignal>
 #include <string>
-#include "src/modules/JsonThreadedTCPServer.h"
-#include "src/modules/ThreadedTCPClient.h"
+#include "src/modules/headers/servers/JsonThreadedTCPServer.h"
+#include "src/modules/headers/clients/ThreadedTCPClient.h"
 
 //JsonThreadedTCPServer* server;
 ThreadedTCPClient* tcp_client;
@@ -28,7 +28,7 @@ int main() {
     p_process_id = getppid();
 
     //printing the process ids
-    printf("Partner process id: %d\n",process_id);
+    printf(GREEN "Partner process id: %d\n" RESET,process_id);
 //    printf("Partner: The process id of parent function: %d\n",p_process_id);
 
     struct sigaction sa{};
@@ -39,7 +39,7 @@ int main() {
 //    client1 = new ThreadedModule(1);
 //    client2 = new ThreadedModule(2);
 
-    tcp_client = new ThreadedTCPClient(3, 54010);
+    tcp_client = new ThreadedTCPClient(3, 54011);
 
 //    server->start();
 //    client1->start();
@@ -50,7 +50,7 @@ int main() {
     tcp_client->start();
 
     while (g_running) pause();
-    printf("exiting safely from while loop\n");
+    printf(YELLOW "exiting safely from while loop\n" RESET);
 
     tcp_client->stop();
 

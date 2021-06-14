@@ -5,7 +5,7 @@
 #ifndef SIYAH1_THREADEDTCPCLIENT_H
 #define SIYAH1_THREADEDTCPCLIENT_H
 
-#include "ThreadedModule.h"
+#include "../servers/ThreadedModule.h"
 
 class ThreadedTCPClient : public ThreadedModule {
 public:

@@ -2,7 +2,7 @@
 // Created by Bulut Gözübüyük on 1.06.2021.
 //
 
-#include "ThreadedTCPServer.h"
+#include "headers/servers/ThreadedTCPServer.h"
 
 ThreadedTCPServer::ThreadedTCPServer(int id, int port) : ThreadedModule(id), server_port(port) {
     this->acceptTimeout = 5;
@@ -15,8 +15,13 @@ bool ThreadedTCPServer::start() {
 
 bool ThreadedTCPServer::stop() {
     printf("TCP Server Close Called.\n");
-    close(this->clientSocket);
-    printf("Client socket closed.\n");
+    //TODO CHANGE FD
+    std::list<int>::iterator close_it;
+    for (close_it = client_socket_fds.begin(); close_it != client_socket_fds.end(); ++close_it) {
+        int fd = *close_it;
+        close(fd);
+    }
+    printf("Client sockets closed.\n");
     return ThreadedModule::stop();
 }
 
@@ -66,42 +71,42 @@ int ThreadedTCPServer::handleServerListen() {
         std::list<int>::iterator its;
         for (its = client_socket_fds.begin(); its != client_socket_fds.end(); ++its) {
             int fd = *its;
-            printf("Client fd: %d\n", fd);
+            printf(GREEN " %d " RESET, fd);
             if (fd > 0) FD_SET(fd, &read_fds);
             if (fd > max_fd) max_fd = fd;
         }
-        iResult = select(max_fd + 1, &read_fds, (fd_set *) 0, (fd_set *) 0, &tv);
+        printf(YELLOW"<<< Client fds \n" RESET);
+        iResult = select(max_fd + 1, &read_fds, nullptr, nullptr, &tv);
 
         if (iResult > 0) {
             if (FD_ISSET(this->master_socketFD, &read_fds)) {
                 int new_socket = accept(this->master_socketFD, (sockaddr *) &addr, &addrSize);
 
                 if (new_socket != -1) {
-                    printf("Accepted clientSocket!\n");
-                    printf("New connection , socket fd is %d , ip is : %s , port : %d\n", new_socket,
+                    printf(GREEN "New connection , socket fd is %d , ip is : %s , port : %d\n" RESET, new_socket,
                            inet_ntoa(addr.sin_addr), ntohs
                            (addr.sin_port));
 
                     (this->client_socket_fds).push_back(new_socket);
                 }
             }
-            char buffer[1025];
-
-            std::list<int>::iterator it2 = (this->client_socket_fds).begin();
+            auto it2 = (this->client_socket_fds).begin();
             while (it2 != (this->client_socket_fds).end()) {
                 int fd = *it2;
-                printf("fd: %d\n", fd);
 
                 if (FD_ISSET(fd, &read_fds)) {
-                    //Check if it was for closing , and also read the incoming message
-                    int valread = read(fd, buffer, 1024);
-                    printf("valread %d\n", valread);
+                    // Clear buffer
+                    memset(this->recv_buffer, 0, 4096);
 
-                    if (valread == 0) {
+                    int bytesRecv = recv(fd, this->recv_buffer, RECV_BUFFER_SIZE, 0);
+
+                    printf("recv ret: %d\n", bytesRecv);
+
+                    if (bytesRecv == 0) {
                         //Somebody disconnected , get his details and print
                         getpeername(fd, (struct sockaddr *) &addr, \
                         (socklen_t *) &addrSize);
-                        printf("Host disconnected , ip %s , port %d \n",
+                        printf(RED "Host disconnected , ip %s , port %d \n" RESET,
                                inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
                         //Close the socket and mark as 0 in list for reuse
@@ -109,17 +114,15 @@ int ThreadedTCPServer::handleServerListen() {
                         it2 = (this->client_socket_fds).erase(it2);
                     }
                     else {
-                        //Echo back the message that came in
-                        //set the string terminating NULL byte on the end
-                        //of the data read
-                        printf("recv: %s\n", buffer);
-                        buffer[valread] = '\0';
-                        send(fd, buffer, strlen(buffer), 0);
+                        std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
+
+                        this->handleReceivedString(strRecv, bytesRecv);
+                        //resend msg (echo)
+                        send(fd, this->recv_buffer, bytesRecv + 1,0);
                     }
                 }
                 it2++;
             }
-
         } else printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
     }
     return 0;

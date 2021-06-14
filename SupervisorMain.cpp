@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <csignal>
 #include <string>
-#include "src/modules/ThreadedTCPServerKeepPartnersAlive.h"
+#include "src/modules/headers/servers/ThreadedTCPServerKeepPartnersAlive.h"
 
 ThreadedTCPServerKeepPartnersAlive* server;
 
@@ -40,7 +40,7 @@ int main(int argc,char* argv[]) {
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
-    server = new ThreadedTCPServerKeepPartnersAlive(0, 54010, partner_executable_path, 3);
+    server = new ThreadedTCPServerKeepPartnersAlive(0, 54011, partner_executable_path, 3);
 
     server->start();
 

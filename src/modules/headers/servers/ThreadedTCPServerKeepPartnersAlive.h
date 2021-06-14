@@ -10,7 +10,7 @@
 
 class ThreadedTCPServerKeepPartnersAlive : public ThreadedTCPServer {
 public:
-    ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path);
+    ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path, int partnerCount);
 
     bool start() override;
 
@@ -18,7 +18,7 @@ public:
 
     int handleReceivedString(std::string strRecv, int bytesRecv) override;
 
-    bool startPartner();
+    pid_t startPartner();
 
 private:
     pthread_t _timer_thread;
@@ -29,12 +29,13 @@ private:
 
     std::string partner_executable_path;
 
-    pid_t child_pid;
-
     int timer;
 
-    std::vector<pid_t> partner_pids;
-    std::vector<int> partner_timers;
+    int number_of_partners;
+
+    std::map<pid_t, int> pidTimerMap;
+
+    std::map<pid_t, int> pidPortMap;
 
 };
 

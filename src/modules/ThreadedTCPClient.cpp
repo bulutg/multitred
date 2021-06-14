@@ -2,7 +2,7 @@
 // Created by Bulut Gözübüyük on 8.06.2021.
 //
 
-#include "ThreadedTCPClient.h"
+#include "headers/clients/ThreadedTCPClient.h"
 
 ThreadedTCPClient::ThreadedTCPClient(int id, int clientPort) : ThreadedModule(id), client_port(clientPort) {}
 
@@ -27,21 +27,20 @@ void ThreadedTCPClient::runClient(void *obj_param) {
 
         //variable to store calling function's process id
 
+        std::string client_pid = std::to_string(process_id);
 
-        std::string userInput = "heartbeat" + std::to_string(process_id);
+
+        std::string userInput = "heartbeat" + client_pid;
 
         // Connect to server
 
         do {
-
             if (connect(tcpClient->master_socketFD, (sockaddr *) &hint, sizeof(hint)) != -1) {
                 printf(GREEN "Client: Connected!\n" RESET);
 
                 do {
-//                std::cout << "> ";
-//                getline(std::cin, userInput);
-
                     if (send(tcpClient->master_socketFD, userInput.c_str(), userInput.size() + 1, 0) != -1) {
+                        printf(GREEN "Client%sSent> %s\n" RESET, client_pid.c_str(),  userInput.c_str());
                         // wait for response
                         memset(tcpClient->recv_buffer, 0, RECV_BUFFER_SIZE);
 
@@ -50,9 +49,9 @@ void ThreadedTCPClient::runClient(void *obj_param) {
 
                             std::string strRecv = std::string(tcpClient->recv_buffer, bytesRecv);
 
-                            printf("SERVER> %s\n", strRecv.c_str());
-                        } else std::cerr << "Client: There was a connecetion issue." << std::endl;
-                    } else printf(RED "Client: Cannot send to server!\n" RESET);
+                            printf(GREEN "Client%sReceived> %s\n" RESET, client_pid.c_str(),  strRecv.c_str());
+                        } else printf(RED "Client%s there was a connection issue\n" RESET, client_pid.c_str());
+                    } else printf(RED "Client%s: Cannot send to server!\n" RESET, client_pid.c_str());
                     sleep(5);
                 } while (tcpClient->loop);
             } else {

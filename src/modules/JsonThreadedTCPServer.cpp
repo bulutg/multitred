@@ -2,7 +2,7 @@
 // Created by Bulut Gözübüyük on 8.06.2021.
 //
 
-#include "JsonThreadedTCPServer.h"
+#include "headers/servers/JsonThreadedTCPServer.h"
 
 JsonThreadedTCPServer::JsonThreadedTCPServer(int id, int port) : ThreadedTCPServer(id, port) {
     this->modules[0] = nullptr;
@@ -35,18 +35,11 @@ int JsonThreadedTCPServer::triggerParseJsonDistribute(const std::string &jsonStr
 int JsonThreadedTCPServer::filterJsonToRingBuffer(std::string strRecv, int bytesRecv) {
     for (int i = 0; i < bytesRecv - 1; ++i) {
         if (strRecv[i] == '{') {
-//            if (curlyCount == 0) {
-//                this->currentFileName = "Thread" + std::to_string(this->id) + "_" + time_stamp();
-//                this->currentFileStream.open(("./out/" + currentFileName + ".txt").c_str());
-//            }
             curlyCount++;
-//            this->currentFileStream << strRecv[i];
-            // cyclic buffer
             this->c_buffer.push(strRecv[i]);
         } else if (strRecv[i] == '}' && curlyCount != 0) {
             curlyCount--;
             if (curlyCount == 0) {
-//                this->currentFileStream << strRecv[i];
                 this->c_buffer.push(strRecv[i]);
 
                 int count = this->c_buffer.getCount();
@@ -56,16 +49,12 @@ int JsonThreadedTCPServer::filterJsonToRingBuffer(std::string strRecv, int bytes
 
                 printf("size: %d", this->c_buffer.gsize());
 
-                for (int j = 0; j < count; ++j) {
+                for (int j = 0; j < count; ++j)
                     jsonStr.append(1, (this->c_buffer.pop()));
-                }
 
-//                printf(GREEN "End of JSON, Closing File Stream!\n" RESET);
-//                this->currentFileStream.close();
                 this->triggerParseJsonDistribute(jsonStr);
             }
         } else if (curlyCount >= 1) {
-//            this->currentFileStream << strRecv[i];
             this->c_buffer.push(strRecv[i]);
         }
     }
