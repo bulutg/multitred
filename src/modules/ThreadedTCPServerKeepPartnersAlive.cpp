@@ -14,15 +14,15 @@ std::string qx(const std::vector<std::string>& args) {
     if (!pid) {
         close(p[0]);
         dup2(p[1], 1);
-//        std::stderr << close(p[1]);
-        close(p[1]);
 
         std::vector<char*> vec(args.size() + 1, 0);
         for (size_t i = 0; i < args.size(); ++i) {
             vec[i] = const_cast<char*>(args[i].c_str());
         }
 
+        sleep(5);
         execvp(vec[0], &vec[0]);
+        // TODO ERROR
         exit(0);
     }
 
@@ -34,7 +34,7 @@ std::string qx(const std::vector<std::string>& args) {
     char buffer[buf_size];
     do {
         const ssize_t r = read(p[0], buffer, buf_size);
-        if (r > 0) out.append(buffer, r);
+        if (r > 0)  out.append(buffer, r);
     } while (errno == EAGAIN || errno == EINTR);
 
     close(p[0]);
@@ -86,8 +86,6 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
 
 
             std::string result = qx(vect);
-
-            printf(RED "QX: %s" RESET, result.c_str());
 
 
 
