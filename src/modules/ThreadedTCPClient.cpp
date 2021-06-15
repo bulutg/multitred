@@ -30,7 +30,7 @@ void ThreadedTCPClient::runClient(void *obj_param) {
         std::string client_pid = std::to_string(process_id);
 
 
-        std::string userInput = "heartbeat" + client_pid;
+        std::string userInput = "heartbeat";
 
         // Connect to server
 

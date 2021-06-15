@@ -2,4 +2,4 @@
 make clean
 cmake .
 make
-./Supervisor 3 "/Users/bulut/CLionProjects/siyah1/Partner"
+./Supervisor 3 "/home/blt/CLionProjects/tredmred/Partner"

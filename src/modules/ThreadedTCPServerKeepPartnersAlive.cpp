@@ -3,6 +3,8 @@
 //
 
 #include "headers/servers/ThreadedTCPServerKeepPartnersAlive.h"
+#include <sstream>
+#include <iostream>
 
 std::string qx(const std::vector<std::string>& args) {
     int p[2];
@@ -19,8 +21,6 @@ std::string qx(const std::vector<std::string>& args) {
         for (size_t i = 0; i < args.size(); ++i) {
             vec[i] = const_cast<char*>(args[i].c_str());
         }
-
-
 
         execvp(vec[0], &vec[0]);
         exit(0);
@@ -81,12 +81,15 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
 
             std::vector<std::string> vect;
 
-            vect.push_back("ls");
-            vect.push_back("-al");
+            vect.push_back("sh");
+            vect.push_back("parsed_ss.sh");
 
-            std::string hheh = qx(vect);
 
-            printf(RED "QX: %s" RESET, hheh.c_str());
+            std::string result = qx(vect);
+
+            printf(RED "QX: %s" RESET, result.c_str());
+
+
 
             std::string colon = ":";
             std::string space = " ";
@@ -94,12 +97,19 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
             std::string comma = ",";
 
 
-            std::string s = "127.0.1:12329 users:((Partner, pid=1132, fd=4))" ;
-            std::string prt = s.substr(s.find(colon) + 1, s.find(space)-s.find(colon)-1 );
-            s.erase(0, s.find(pid) + pid.length());
-            std::string pidno = s.substr(0, s.find(comma));
+//            std::string s = "127.0.1:12329 users:((Partner, pid=1132, fd=4))" ;
+            printf(GREEN "PARSED PORT AND PID\n" RESET);
 
-            printf(YELLOW "Port>%s<  ---   Pid>%s<" RESET, prt.c_str(), pidno.c_str());
+            std::string s;
+
+            std::istringstream f(result);
+
+            while (getline(f, s)) {
+                std::string prt = s.substr(s.find(colon) + 1, s.find(space)-s.find(colon)-1 );
+                s.erase(0, s.find(pid) + pid.length());
+                std::string pidno = s.substr(0, s.find(comma));
+                printf(RED "Port> %s matches Pid> %s \n" RESET, prt.c_str(), pidno.c_str());
+            }
 
             pthread_mutex_unlock(&(tcpServer->_timer_mutex));
         }
