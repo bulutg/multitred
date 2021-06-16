@@ -4,6 +4,7 @@
 
 #include "headers/servers/ThreadedTCPServerKeepPartnersAlive.h"
 #include <iostream>
+#include <utility>
 
 std::string qx(const std::vector<std::string>& args) {
     int p[2];
@@ -71,8 +72,8 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
             // clean pid timer map
             (tcpServer->pidTimerMap).clear();
 
-            for (int i = 0; i < tcpServer->number_of_partners; ++i) {
-                pid_t currentPid = tcpServer->startPartner();
+            for (auto & p : tcpServer->partners) {
+                pid_t currentPid = tcpServer->startPartner(p);
                 (tcpServer->pidTimerMap).insert({currentPid, 0});
             }
 
@@ -120,10 +121,9 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
     }
 }
 
-ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path, int partnerCount, std::vector<struct Partner> partner_vec) : ThreadedTCPServer(id, port) {
+ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port, std::vector<struct Partner> partner_vec) : ThreadedTCPServer(id, port) {
     pthread_mutex_init(&(this->_timer_mutex), NULL);
-    this->partner_executable_path = std::move(path);
-    this->number_of_partners = partnerCount;
+    this->partners = std::move(partner_vec);
 }
 
 int ThreadedTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv, int bytesRecv) {
@@ -153,11 +153,11 @@ bool ThreadedTCPServerKeepPartnersAlive::stop() {
     return false;
 }
 
-pid_t ThreadedTCPServerKeepPartnersAlive::startPartner() {
+pid_t ThreadedTCPServerKeepPartnersAlive::startPartner(const struct Partner& partner) {
 
     pid_t child_pid = fork();
 
-    char* appName = const_cast<char *>((this->partner_executable_path).c_str());
+    char* appName = const_cast<char *>((partner.exec_str).c_str());
 
     char* argv[] = {appName, NULL};
 
