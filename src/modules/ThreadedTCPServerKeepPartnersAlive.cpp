@@ -69,8 +69,9 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
                 kill(currentPid, SIGTERM);
             }
 
-            // clean pid timer map
+            // clean pid timer and port map
             (tcpServer->pidTimerMap).clear();
+            (tcpServer->pidPortMap).clear();
 
             for (auto & p : tcpServer->partners) {
                 pid_t currentPid = tcpServer->startPartner(p);
@@ -84,22 +85,15 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
             vect.push_back("sh");
             vect.push_back("parsed_ss.sh");
 
-
             std::string result = qx(vect);
-
-
 
             std::string colon = ":";
             std::string space = " ";
             std::string pid = "pid=";
             std::string comma = ",";
-
-
-//            std::string s = "127.0.1:12329 users:((Partner, pid=1132, fd=4))" ;
             printf(GREEN "PARSED PORT AND PID\n" RESET);
 
             std::string s;
-
             std::istringstream f(result);
 
             while (getline(f, s)) {
@@ -107,6 +101,7 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
                 s.erase(0, s.find(pid) + pid.length());
                 std::string pidno = s.substr(0, s.find(comma));
                 printf(RED "Port> %s matches Pid> %s \n" RESET, prt.c_str(), pidno.c_str());
+                (tcpServer->pidPortMap).insert({std::stoi(pidno), std::stoi(prt)});
             }
 
             pthread_mutex_unlock(&(tcpServer->_timer_mutex));
