@@ -7,6 +7,8 @@
 
 
 #include "ThreadedTCPServer.h"
+#include "../components/Partner.h"
+
 
 class ThreadedTCPServerKeepPartnersAlive : public ThreadedTCPServer {
 public:

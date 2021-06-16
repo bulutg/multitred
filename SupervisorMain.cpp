@@ -29,6 +29,10 @@ int main(int argc,char* argv[]) {
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
+    std::vector<struct Partner> partner_vec;
+
+    struct Partner p1, p2, p3;
+
     server = new ThreadedTCPServerKeepPartnersAlive(0, 54011, "/home/blt/CLionProjects/tredmred/Partner", 3);
 
     server->start();
