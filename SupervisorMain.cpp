@@ -33,7 +33,15 @@ int main(int argc,char* argv[]) {
 
     struct Partner p1, p2, p3;
 
-    server = new ThreadedTCPServerKeepPartnersAlive(0, 54011, "/home/blt/CLionProjects/tredmred/Partner", 3);
+    p1 = {.exec_str = "/home/blt/CLionProjects/tredmred/Partner", .param = ""};
+    p2 = {.exec_str = "/home/blt/CLionProjects/tredmred/Partner", .param = ""};
+    p3 = {.exec_str = "/home/blt/CLionProjects/tredmred/Partner", .param = ""};
+
+    partner_vec.push_back(p1);
+    partner_vec.push_back(p2);
+    partner_vec.push_back(p3);
+
+    server = new ThreadedTCPServerKeepPartnersAlive(0, 54011, "/home/blt/CLionProjects/tredmred/Partner", 3, partner_vec);
 
     server->start();
 

@@ -120,7 +120,7 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
     }
 }
 
-ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path, int partnerCount) : ThreadedTCPServer(id, port) {
+ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path, int partnerCount, std::vector<struct Partner> partner_vec) : ThreadedTCPServer(id, port) {
     pthread_mutex_init(&(this->_timer_mutex), NULL);
     this->partner_executable_path = std::move(path);
     this->number_of_partners = partnerCount;

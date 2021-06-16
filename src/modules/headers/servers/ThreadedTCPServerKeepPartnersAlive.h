@@ -12,7 +12,7 @@
 
 class ThreadedTCPServerKeepPartnersAlive : public ThreadedTCPServer {
 public:
-    ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path, int partnerCount);
+    ThreadedTCPServerKeepPartnersAlive(int id, int port, std::string path, int partnerCount, std::vector<struct Partner> partner_vec);
 
     bool start() override;
 
