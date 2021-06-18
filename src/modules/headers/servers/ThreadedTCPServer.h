@@ -21,7 +21,7 @@ public:
 
     ~ThreadedTCPServer() override;
 
-    virtual int handleReceivedString(std::string strRecv, int bytesRecv);
+    virtual int handleReceivedString(std::string strRecv, int bytesRecv, int port);
 
 private:
 

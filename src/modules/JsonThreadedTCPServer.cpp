@@ -61,7 +61,7 @@ int JsonThreadedTCPServer::filterJsonToRingBuffer(std::string strRecv, int bytes
     return 0;
 }
 
-int JsonThreadedTCPServer::handleReceivedString(std::string strRecv, int bytesRecv) {
+int JsonThreadedTCPServer::handleReceivedString(std::string strRecv, int bytesRecv, int port) {
     //clean \n
     strRecv.erase(std::remove(strRecv.begin(), strRecv.end(), '\n'), strRecv.end());
     printf(GREEN "Server Received: %s Loop %d\n" RESET, strRecv.c_str(), this->loop);

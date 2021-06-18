@@ -121,12 +121,12 @@ ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, i
     this->partners = std::move(partner_vec);
 }
 
-int ThreadedTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv, int bytesRecv) {
+int ThreadedTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv, int bytesRecv, int port) {
     strRecv.erase(std::remove(strRecv.begin(), strRecv.end(), '\n'), strRecv.end());
     printf(GREEN "KCA: Server Received: %s Loop %d\n" RESET, strRecv.c_str(), this->loop);
 
     if (strRecv == "heartbeat") {
-        printf(GREEN "Partner is alive, received heartbeat!\n" RESET);
+        printf(GREEN "Partner is alive, received heartbeat from port %d!\n" RESET, port);
         pthread_mutex_lock(&(this->_timer_mutex));
         timer = 0;
         pthread_mutex_unlock(&(this->_timer_mutex));

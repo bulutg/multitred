@@ -18,7 +18,7 @@ public:
 
     bool stop() override;
 
-    int handleReceivedString(std::string strRecv, int bytesRecv) override;
+    int handleReceivedString(std::string strRecv, int bytesRecv, int port) override;
 
     pid_t startPartner(const struct Partner& partner);
 

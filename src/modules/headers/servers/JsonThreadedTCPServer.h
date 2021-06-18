@@ -26,7 +26,7 @@ private:
 
 
 public:
-    int handleReceivedString(std::string strRecv, int bytesRecv) override;
+    int handleReceivedString(std::string strRecv, int bytesRecv, int port) override;
 
 };
 

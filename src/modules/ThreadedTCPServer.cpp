@@ -84,8 +84,7 @@ int ThreadedTCPServer::handleServerListen() {
 
                 if (new_socket != -1) {
                     printf(GREEN "New connection , socket fd is %d , ip is : %s , port : %d\n" RESET, new_socket,
-                           inet_ntoa(addr.sin_addr), ntohs
-                           (addr.sin_port));
+                           inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
                     (this->client_socket_fds).push_back(new_socket);
                 }
@@ -102,10 +101,11 @@ int ThreadedTCPServer::handleServerListen() {
 
                     printf("recv ret: %d\n", bytesRecv);
 
+                    getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
+
                     if (bytesRecv == 0) {
+                        //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
                         //Somebody disconnected , get his details and print
-                        getpeername(fd, (struct sockaddr *) &addr, \
-                        (socklen_t *) &addrSize);
                         printf(RED "Host disconnected , ip %s , port %d \n" RESET,
                                inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
@@ -116,7 +116,7 @@ int ThreadedTCPServer::handleServerListen() {
                     else {
                         std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
 
-                        this->handleReceivedString(strRecv, bytesRecv);
+                        this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
                         //resend msg (echo)
                         send(fd, this->recv_buffer, bytesRecv + 1,0);
                     }
@@ -128,7 +128,7 @@ int ThreadedTCPServer::handleServerListen() {
     return 0;
 }
 
-int ThreadedTCPServer::handleReceivedString(std::string strRecv, int bytesRecv) {
+int ThreadedTCPServer::handleReceivedString(std::string strRecv, int bytesRecv, int port) {
     //clean \n
     strRecv.erase(std::remove(strRecv.begin(), strRecv.end(), '\n'), strRecv.end());
     printf(GREEN "Server Received: %s Loop %d\n" RESET, strRecv.c_str(), this->loop);
