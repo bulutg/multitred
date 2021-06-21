@@ -3,10 +3,8 @@
 //
 
 #include "headers/servers/ThreadedTCPServerKeepPartnersAlive.h"
-#include <iostream>
-#include <utility>
 
-std::string qx(const std::vector<std::string> &args) {
+std::string execGetOutput(const std::vector<std::string> &args) {
     int p[2];
     pipe(p);
 
@@ -86,7 +84,7 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
             vect.push_back("sh");
             vect.push_back("parsed_ss.sh");
 
-            std::string result = qx(vect);
+            std::string result = execGetOutput(vect);
 
             std::string colon = ":";
             std::string space = " ";
@@ -157,17 +155,14 @@ bool ThreadedTCPServerKeepPartnersAlive::start() {
 bool ThreadedTCPServerKeepPartnersAlive::stop() {
     ThreadedTCPServer::stop();
     (void) pthread_join(_timer_thread, nullptr);
-    // TODO wait for child processes
     while (wait(NULL) > 0) {}
     return false;
 }
 
 pid_t ThreadedTCPServerKeepPartnersAlive::startPartner(const struct Partner &partner) {
-
     pid_t child_pid = fork();
 
     char *appName = const_cast<char *>((partner.exec_str).c_str());
-
     char *argv[] = {appName, NULL};
 
     if (child_pid == 0) {

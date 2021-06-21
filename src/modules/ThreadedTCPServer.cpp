@@ -112,13 +112,12 @@ int ThreadedTCPServer::handleServerListen() {
                         //Close the socket and mark as 0 in list for reuse
                         close(fd);
                         it2 = (this->client_socket_fds).erase(it2);
-                    }
-                    else {
+                    } else {
                         std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
 
                         this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
                         //resend msg (echo)
-                        send(fd, this->recv_buffer, bytesRecv + 1,0);
+                        send(fd, this->recv_buffer, bytesRecv + 1, 0);
                     }
                 }
                 it2++;
