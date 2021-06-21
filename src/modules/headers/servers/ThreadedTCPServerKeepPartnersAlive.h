@@ -33,7 +33,7 @@ private:
 
     std::map<pid_t, int> pidTimerMap;
 
-    std::map<pid_t, int> pidPortMap;
+    std::map<int, pid_t> portPidMap;
 
     std::vector<struct Partner> partners;
 

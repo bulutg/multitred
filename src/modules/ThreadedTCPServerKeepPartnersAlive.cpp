@@ -6,7 +6,7 @@
 #include <iostream>
 #include <utility>
 
-std::string qx(const std::vector<std::string>& args) {
+std::string qx(const std::vector<std::string> &args) {
     int p[2];
     pipe(p);
 
@@ -15,9 +15,9 @@ std::string qx(const std::vector<std::string>& args) {
         close(p[0]);
         dup2(p[1], 1);
 
-        std::vector<char*> vec(args.size() + 1, 0);
+        std::vector<char *> vec(args.size() + 1, 0);
         for (size_t i = 0; i < args.size(); ++i) {
-            vec[i] = const_cast<char*>(args[i].c_str());
+            vec[i] = const_cast<char *>(args[i].c_str());
         }
 
         sleep(5);
@@ -27,14 +27,13 @@ std::string qx(const std::vector<std::string>& args) {
     }
 
     close(p[1]);
-//    dup2(p[0], 0);
 
     std::string out;
     const int buf_size = 4096;
     char buffer[buf_size];
     do {
         const ssize_t r = read(p[0], buffer, buf_size);
-        if (r > 0)  out.append(buffer, r);
+        if (r > 0) out.append(buffer, r);
     } while (errno == EAGAIN || errno == EINTR);
 
     close(p[0]);
@@ -50,20 +49,22 @@ std::string qx(const std::vector<std::string>& args) {
 
 void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
     ThreadedTCPServerKeepPartnersAlive *tcpServer = ((ThreadedTCPServerKeepPartnersAlive *) obj_param);
-    bool restart = false;
-    while(tcpServer->loop){
-        for (auto & it : tcpServer->pidTimerMap){
-            if (it.second > 500) {
+    bool restart;
+    while (tcpServer->loop) {
+        restart = false;
+        for (auto &it : tcpServer->pidTimerMap) {
+            if (it.second > 12) {
+                printf(RED "no response from partner pid: %d\n" RESET, it.first);
                 restart = true;
                 break;
             }
         }
-        if (restart || tcpServer->pidTimerMap.empty()){
+        if (restart || tcpServer->pidTimerMap.empty()) {
             printf(RED "no response from partner, deploying partner again..\n" RESET);
 
             pthread_mutex_lock(&(tcpServer->_timer_mutex));
 
-            for (auto & it : tcpServer->pidTimerMap){
+            for (auto &it : tcpServer->pidTimerMap) {
                 pid_t currentPid = it.first;
                 printf(RED "Killing process %d\n" RESET, currentPid);
                 kill(currentPid, SIGTERM);
@@ -71,9 +72,9 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
 
             // clean pid timer and port map
             (tcpServer->pidTimerMap).clear();
-            (tcpServer->pidPortMap).clear();
+            (tcpServer->portPidMap).clear();
 
-            for (auto & p : tcpServer->partners) {
+            for (auto &p : tcpServer->partners) {
                 pid_t currentPid = tcpServer->startPartner(p);
                 (tcpServer->pidTimerMap).insert({currentPid, 0});
             }
@@ -97,11 +98,11 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
             std::istringstream f(result);
 
             while (getline(f, s)) {
-                std::string prt = s.substr(s.find(colon) + 1, s.find(space)-s.find(colon)-1 );
+                std::string prt = s.substr(s.find(colon) + 1, s.find(space) - s.find(colon) - 1);
                 s.erase(0, s.find(pid) + pid.length());
                 std::string pidno = s.substr(0, s.find(comma));
                 printf(RED "Port> %s matches Pid> %s \n" RESET, prt.c_str(), pidno.c_str());
-                (tcpServer->pidPortMap).insert({std::stoi(pidno), std::stoi(prt)});
+                (tcpServer->portPidMap).insert({std::stoi(prt), std::stoi(pidno)});
             }
 
             pthread_mutex_unlock(&(tcpServer->_timer_mutex));
@@ -109,14 +110,16 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
 
         sleep(1);
         pthread_mutex_lock(&(tcpServer->_timer_mutex));
-        for (auto & it : tcpServer->pidTimerMap){
+        for (auto &it : tcpServer->pidTimerMap) {
             it.second++;
         }
         pthread_mutex_unlock(&(tcpServer->_timer_mutex));
     }
 }
 
-ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port, std::vector<struct Partner> partner_vec) : ThreadedTCPServer(id, port) {
+ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port,
+                                                                       std::vector<struct Partner> partner_vec)
+        : ThreadedTCPServer(id, port) {
     pthread_mutex_init(&(this->_timer_mutex), NULL);
     this->partners = std::move(partner_vec);
 }
@@ -128,7 +131,18 @@ int ThreadedTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv
     if (strRecv == "heartbeat") {
         printf(GREEN "Partner is alive, received heartbeat from port %d!\n" RESET, port);
         pthread_mutex_lock(&(this->_timer_mutex));
-        timer = 0;
+
+        std::_Rb_tree_iterator<std::pair<const int, int>> foundPid = this->portPidMap.find(port);
+
+        if (foundPid != this->portPidMap.end()) {
+            //reset timer
+            std::_Rb_tree_iterator<std::pair<const int, int>> foundTimer = this->pidTimerMap.find(foundPid->second);
+            if (foundTimer != this->pidTimerMap.end()) {
+                //reset timer
+                foundTimer->second = 0;
+            }
+        }
+
         pthread_mutex_unlock(&(this->_timer_mutex));
     }
 
@@ -144,23 +158,22 @@ bool ThreadedTCPServerKeepPartnersAlive::stop() {
     ThreadedTCPServer::stop();
     (void) pthread_join(_timer_thread, nullptr);
     // TODO wait for child processes
-    while(wait(NULL) > 0) {}
+    while (wait(NULL) > 0) {}
     return false;
 }
 
-pid_t ThreadedTCPServerKeepPartnersAlive::startPartner(const struct Partner& partner) {
+pid_t ThreadedTCPServerKeepPartnersAlive::startPartner(const struct Partner &partner) {
 
     pid_t child_pid = fork();
 
-    char* appName = const_cast<char *>((partner.exec_str).c_str());
+    char *appName = const_cast<char *>((partner.exec_str).c_str());
 
-    char* argv[] = {appName, NULL};
+    char *argv[] = {appName, NULL};
 
     if (child_pid == 0) {
         // deploy partner here
         execvp(appName, argv);
         fprintf(stderr, "an error occurred in execvp\n");
         abort();
-    }
-    else return child_pid;
+    } else return child_pid;
 }
