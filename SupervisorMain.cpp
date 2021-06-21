@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <csignal>
 #include <string>
-#include "src/modules/headers/servers/ThreadedTCPServerKeepPartnersAlive.h"
+#include "src/headers/servers/ThreadedTCPServerKeepPartnersAlive.h"
 
 ThreadedTCPServerKeepPartnersAlive* server;
 

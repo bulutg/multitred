@@ -2,7 +2,7 @@
 // Created by Bulut Gözübüyük on 31.05.2021.
 //
 
-#include "headers/servers/ThreadedModule.h"
+#include "headers/modules/ThreadedModule.h"
 
 ThreadedModule::ThreadedModule(int id) : id(id), c_buffer(RING_BUFFER_SIZE) {
     this->loop = 1;

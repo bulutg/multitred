@@ -22,7 +22,7 @@
 
 #include "../components/SafeQueue.h"
 #include "../components/CircularBuffer.h"
-#include "../../../../lib/json.hpp"
+#include "../../../lib/json.hpp"
 
 #ifndef SIYAH1_THREADEDMODULE_H
 #define SIYAH1_THREADEDMODULE_H
