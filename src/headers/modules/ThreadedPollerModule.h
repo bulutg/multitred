@@ -26,6 +26,7 @@ public:
     int unregister_handler(int fd_r);
 
 private:
+    std::map<struct PollerStruct, std::string> pollMap;
     std::vector<struct pollfd> poll_fds;
     pthread_mutex_t _poller_mutex;
 };

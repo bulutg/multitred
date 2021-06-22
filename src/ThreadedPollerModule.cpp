@@ -13,10 +13,10 @@ int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str
     struct pollfd new_pollfd{};
     new_pollfd.fd = poller_str.poll_fd;
     new_pollfd.events = poller_str.poll_events;
-    new_pollfd.revents = poller_str.poll_revents;
 
     pthread_mutex_lock(&(this->_poller_mutex));
     this->poll_fds.push_back(new_pollfd);
+    (this->pollMap).insert({poller_str, function_name} );
     pthread_mutex_unlock(&(this->_poller_mutex));
     return 0;
 }
@@ -63,6 +63,8 @@ void ThreadedPollerModule::runModule(void *obj_param) {
         if (!ret) {
             printf(RESET"%d seconds elapsed.\n" RESET, TIMEOUT);
         }
+
+
     }
 
 }
