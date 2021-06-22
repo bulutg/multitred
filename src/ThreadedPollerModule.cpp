@@ -34,6 +34,14 @@ int ThreadedPollerModule::unregister_handler(int fd_r) {
         else it++;
     }
 
+    auto mit = this->pollMap.cbegin();
+
+    while (mit != this->pollMap.end()) {
+        if (mit->first.poll_fd == fd_r) {
+            this->pollMap.erase(mit);
+            break;
+        } else ++mit;
+    }
 
     pthread_mutex_unlock(&(this->_poller_mutex));
     return 0;
