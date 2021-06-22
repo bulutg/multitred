@@ -4,3 +4,6 @@ Makefile
 /Supervisor
 /siyah1.cbp
 /Partner
+/cmake-build-debug/parsed_ss.sh
+/cmake-build-debug/
+/CMakeFiles/

@@ -18,6 +18,7 @@
 #include <sys/wait.h>
 #include <list>
 #include <csignal>
+#include <sys/poll.h>
 
 
 #include "../components/SafeQueue.h"

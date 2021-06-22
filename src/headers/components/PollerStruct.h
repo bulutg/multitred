@@ -6,8 +6,9 @@
 #define SIYAH1_PARTNER_H
 
 struct PollerStruct {
-    std::string exec_str;
-    std::string param;
+    int poll_fd;
+    short poll_events;
+    short poll_revents;
 };
 
 #endif //SIYAH1_PARTNER_H

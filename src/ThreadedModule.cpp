@@ -49,8 +49,8 @@ void ThreadedModule::send_message(const std::string &message) {
 void ThreadedModule::trigger_exit() {
     if (this->loop == 1) {
         this->send_message("exit");
-        printf("exit message sent thread: %d\n", this->id);
-    } else printf("Thread: %d is not running so not triggered exit\n", this->id);
+        printf(YELLOW "exit message sent thread: %d\n" RESET, this->id);
+    } else printf(RED "Thread: %d is not running, unable to trigger exit\n" RESET, this->id);
 }
 
 int ThreadedModule::is_running() const {

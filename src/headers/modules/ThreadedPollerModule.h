@@ -15,11 +15,19 @@ public:
 
     ~ThreadedPollerModule() override;
 
+    bool start() override;
+
+    bool stop() override;
+
+    static void runModule(void *obj_param);
+
     int register_handler(const struct PollerStruct& poller_str, const std::string& function_name);
 
-    int unregister_handler(int fd);
+    int unregister_handler(int fd_r);
 
-
+private:
+    std::vector<struct pollfd> poll_fds;
+    pthread_mutex_t _poller_mutex;
 };
 
 
