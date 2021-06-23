@@ -9,7 +9,7 @@ ThreadedPollerModule::ThreadedPollerModule(int id) : ThreadedModule(id) {
     pthread_mutex_init(&(this->_poller_mutex), NULL);
 }
 
-int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str, const std::string &function_name) {
+int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str, const std::function<void()>& function_name) {
     struct pollfd new_pollfd{};
     new_pollfd.fd = poller_str.poll_fd;
     new_pollfd.events = poller_str.poll_events;
@@ -72,7 +72,28 @@ void ThreadedPollerModule::runModule(void *obj_param) {
             printf(RESET"%d seconds elapsed.\n" RESET, TIMEOUT);
         }
 
+/*
+        for (auto & pfd : module->poll_fds) {
+            auto it = find_if(begin(module->pollMap), end(module->pollMap), [=] (PollerStruct const& f) {
+                return (f.poll_fd == pfd.fd);
+            });
 
+            bool found = (it != end(module->pollMap));
+            if (found) {
+
+            }
+        }
+*/
+
+        for (auto & ele : module->pollMap) {
+            auto it = find_if(begin(module->poll_fds), end(module->poll_fds), [=] (struct pollfd const& f) {
+                return (f.fd == ele.first.poll_fd);
+            });
+            bool found = (it != end(module->poll_fds));
+            if (found && it->revents == ele.first.poll_revents){
+                ele.second();
+            }
+        }
     }
 
 }

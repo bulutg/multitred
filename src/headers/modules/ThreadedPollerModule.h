@@ -21,12 +21,12 @@ public:
 
     static void runModule(void *obj_param);
 
-    int register_handler(const struct PollerStruct& poller_str, const std::string& function_name);
+    int register_handler(const struct PollerStruct& poller_str, const std::function<void()>& function_name);
 
     int unregister_handler(int fd_r);
 
 private:
-    std::map<struct PollerStruct, std::string> pollMap;
+    std::map<struct PollerStruct, std::function<void()>> pollMap;
     std::vector<struct pollfd> poll_fds;
     pthread_mutex_t _poller_mutex;
 };
