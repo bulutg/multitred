@@ -19,11 +19,13 @@ public:
 
     bool stop() override;
 
-    static void runModule(void *obj_param);
-
     int register_handler(const struct PollerStruct& poller_str, const std::function<void()>& function_name);
 
     int unregister_handler(int fd_r);
+
+protected:
+
+    static void runModule(void *obj_param);
 
 private:
     std::map<struct PollerStruct, std::function<void()>> pollMap;
