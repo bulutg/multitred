@@ -8,7 +8,6 @@
 struct PollerStruct {
     int poll_fd;
     short poll_events;
-    short poll_revents;
 
     bool operator<(const PollerStruct& t) const
     {

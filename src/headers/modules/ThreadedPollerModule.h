@@ -19,10 +19,11 @@ public:
 
     bool stop() override;
 
-    int register_handler(const struct PollerStruct& poller_str, const std::function<void()>& function_name);
+    int register_handler(const struct PollerStruct& poller_str, const std::function<int(int)>& function_name);
 
     int unregister_handler(int fd_r);
 
+    static int sampleFunction(int a);
 protected:
 
     static void runModule(void *obj_param);

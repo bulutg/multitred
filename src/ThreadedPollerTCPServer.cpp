@@ -97,41 +97,43 @@ int ThreadedPollerTCPServer::handleServerListen() {
                     printf(GREEN "New connection , socket fd is %d , ip is : %s , port : %d\n" RESET, new_socket,
                            inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
-                    (this->client_socket_fds).push_back(new_socket);
+                    //(this->client_socket_fds).push_back(new_socket);
+
+                    struct PollerStruct poll_struct = {.poll_fd = new_socket, .poll_events=POLLIN};
+                    std::string funcName = "sampleFunction";
+
+
+                    this->register_handler(poll_struct, (&(ThreadedPollerTCPServer::sampleFunction)));
                 }
             }
-            auto it2 = (this->client_socket_fds).begin();
-            while (it2 != (this->client_socket_fds).end()) {
-                int fd = *it2;
+            int fd = 0;
 
-                if (FD_ISSET(fd, &read_fds)) {
-                    // Clear buffer
-                    memset(this->recv_buffer, 0, 4096);
+            if (FD_ISSET(fd, &read_fds)) {
+                // Clear buffer
+                memset(this->recv_buffer, 0, 4096);
 
-                    int bytesRecv = recv(fd, this->recv_buffer, RECV_BUFFER_SIZE, 0);
+                int bytesRecv = recv(fd, this->recv_buffer, RECV_BUFFER_SIZE, 0);
 
-                    printf("recv ret: %d\n", bytesRecv);
+                printf("recv ret: %d\n", bytesRecv);
 
-                    getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
+                getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
 
-                    if (bytesRecv == 0) {
-                        //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
-                        //Somebody disconnected , get his details and print
-                        printf(RED "Host disconnected , ip %s , port %d \n" RESET,
-                               inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+                if (bytesRecv == 0) {
+                    //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
+                    //Somebody disconnected , get his details and print
+                    printf(RED "Host disconnected , ip %s , port %d \n" RESET,
+                           inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
-                        //Close the socket and mark as 0 in list for reuse
-                        close(fd);
-                        it2 = (this->client_socket_fds).erase(it2);
-                    } else {
-                        std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
+                    //Close the socket and mark as 0 in list for reuse
+                    close(fd);
+                    it2 = (this->client_socket_fds).erase(it2);
+                } else {
+                    std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
 
-                        this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
-                        //resend msg (echo)
-                        send(fd, this->recv_buffer, bytesRecv + 1, 0);
-                    }
+                    this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
+                    //resend msg (echo)
+                    send(fd, this->recv_buffer, bytesRecv + 1, 0);
                 }
-                it2++;
             }
         } else printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
     }
