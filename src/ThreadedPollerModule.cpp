@@ -85,39 +85,6 @@ void ThreadedPollerModule::runModule(void *obj_param) {
 
 }
 
-int ThreadedPollerModule::sampleFunction(struct PollerStruct ps) {
-
-    int fd = ps.poll_fd;
-    sockaddr_in addr = ps.poll_addr;
-    socklen_t addrSize = sizeof(addr);
-
-    // Clear buffer
-    memset(this->recv_buffer, 0, 4096);
-
-    int bytesRecv = recv(fd, this->recv_buffer, RECV_BUFFER_SIZE, 0);
-
-    printf("recv ret: %d\n", bytesRecv);
-
-    getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
-
-    if (bytesRecv == 0) {
-        //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
-        //Somebody disconnected , get his details and print
-        printf(RED "Host disconnected , ip %s , port %d \n" RESET,
-               inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
-
-        //Close the socket and mark as 0 in list for reuse
-        close(fd);
-        //it2 = (this->client_socket_fds).erase(it2);
-    } else {
-        std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
-
-        this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
-        //resend msg (echo)
-        send(fd, this->recv_buffer, bytesRecv + 1, 0);
-    }
-    return 0;
-}
 
 void ThreadedPollerModule::handleReceivedString(std::string basicString, int i, uint16_t i1) {
 

@@ -61,57 +61,83 @@ int ThreadedPollerTCPServer::handleReceivedString(std::string strRecv, int bytes
 
 int ThreadedPollerTCPServer::handleServerListen() {
     printf(GREEN "Listen!\n" RESET);
-    sockaddr_in addr;
-    socklen_t addrSize = sizeof(addr);
 
-    int max_fd, iResult;
-
-    struct timeval tv;
-    fd_set read_fds;
+    int max_fd;
 
     printf(YELLOW "Try to accept! loop: %d\n" RESET, this->loop);
     while (this->loop) {
-        tv.tv_sec = (long) this->acceptTimeout;
-        tv.tv_usec = 0;
-
-        FD_ZERO(&read_fds);
-        FD_SET(this->master_socketFD, &read_fds);
-
-        max_fd = this->master_socketFD;
+        max_fd = -1;
 
         std::list<int>::iterator its;
         for (its = client_socket_fds.begin(); its != client_socket_fds.end(); ++its) {
             int fd = *its;
             printf(GREEN " %d " RESET, fd);
-            if (fd > 0) FD_SET(fd, &read_fds);
             if (fd > max_fd) max_fd = fd;
         }
-        printf(YELLOW"<<< Client fds \n" RESET);
-        iResult = select(max_fd + 1, &read_fds, nullptr, nullptr, &tv);
 
-        if (iResult > 0) {
-            if (FD_ISSET(this->master_socketFD, &read_fds)) {
-                int new_socket = accept(this->master_socketFD, (sockaddr *) &addr, &addrSize);
+        // TODO fd +1
+        struct PollerStruct poll_struct = {.poll_fd = max_fd, .poll_events=POLLIN};
 
-                if (new_socket != -1) {
-                    printf(GREEN "New connection , socket fd is %d , ip is : %s , port : %d\n" RESET, new_socket,
-                           inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+        std::function<int(struct PollerStruct)> sampleFuncM(std::bind(&ThreadedPollerTCPServer::sampleFunctionMaster, this, poll_struct));
 
-                    //(this->client_socket_fds).push_back(new_socket);
+        this->register_handler(poll_struct, sampleFuncM);
+    }
+    return 0;
+}
 
-                    struct PollerStruct poll_struct = {.poll_fd = new_socket, .poll_events=POLLIN, .poll_addr = addr};
+int ThreadedPollerTCPServer::sampleFunction(struct PollerStruct ps) {
 
-                    std::function<int(struct PollerStruct)> sampleFunc(std::bind(&ThreadedPollerTCPServer::sampleFunction, this, poll_struct));
+    int fd = ps.poll_fd;
+    sockaddr_in addr = ps.poll_addr;
+    socklen_t addrSize = sizeof(addr);
 
-                    this->register_handler(poll_struct, sampleFunc);
-                }
-            }
-            int fd = 0;
+    // Clear buffer
+    memset(this->recv_buffer, 0, 4096);
 
-            if (FD_ISSET(fd, &read_fds)) {
+    int bytesRecv = recv(fd, this->recv_buffer, RECV_BUFFER_SIZE, 0);
 
-            }
-        } else printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
+    printf("recv ret: %d\n", bytesRecv);
+
+    getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
+
+    if (bytesRecv == 0) {
+        //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
+        //Somebody disconnected , get his details and print
+        printf(RED "Host disconnected , ip %s , port %d \n" RESET,
+               inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+
+        //Close the socket and mark as 0 in list for reuse
+        close(fd);
+        //TODO
+        //it2 = (this->client_socket_fds).erase(it2);
+    } else {
+        std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
+
+        this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
+        //resend msg (echo)
+        send(fd, this->recv_buffer, bytesRecv + 1, 0);
+    }
+    return 0;
+}
+
+int ThreadedPollerTCPServer::sampleFunctionMaster(struct PollerStruct ps) {
+    int fd = ps.poll_fd;
+    sockaddr_in addr = ps.poll_addr;
+    socklen_t addrSize = sizeof(addr);
+
+    int new_socket = accept(fd, (sockaddr *) &addr, &addrSize);
+
+    if (new_socket != -1) {
+        printf(GREEN "New connection , socket fd is %d , ip is : %s , port : %d\n" RESET, new_socket,
+               inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+
+        //(this->client_socket_fds).push_back(new_socket);
+
+        struct PollerStruct poll_struct = {.poll_fd = new_socket, .poll_events=POLLIN, .poll_addr = addr};
+
+        std::function<int(struct PollerStruct)> sampleFunc(std::bind(&ThreadedPollerTCPServer::sampleFunction, this, poll_struct));
+
+        this->register_handler(poll_struct, sampleFunc);
     }
     return 0;
 }

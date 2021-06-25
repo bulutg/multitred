@@ -23,7 +23,6 @@ public:
 
     int unregister_handler(int fd_r);
 
-    int sampleFunction(struct PollerStruct ps);
 
 protected:
 

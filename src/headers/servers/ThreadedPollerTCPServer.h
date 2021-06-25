@@ -22,7 +22,9 @@ public:
 
     virtual int handleReceivedString(std::string strRecv, int bytesRecv, int port);
 
-    int (ThreadedPollerTCPServer::*x)();
+    int sampleFunction(struct PollerStruct ps);
+
+    int sampleFunctionMaster(struct PollerStruct ps);
 
 private:
 
