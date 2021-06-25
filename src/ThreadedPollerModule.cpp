@@ -9,7 +9,7 @@ ThreadedPollerModule::ThreadedPollerModule(int id) : ThreadedModule(id) {
     pthread_mutex_init(&(this->_poller_mutex), NULL);
 }
 
-int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str, const std::function<int(int)>& function_name) {
+int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str, std::function<int(struct PollerStruct)> function_name) {
     struct pollfd new_pollfd{};
     new_pollfd.fd = poller_str.poll_fd;
     new_pollfd.events = poller_str.poll_events;
@@ -78,15 +78,49 @@ void ThreadedPollerModule::runModule(void *obj_param) {
             });
             bool found = (it != end(module->poll_fds));
             if (found && it->revents == ele.first.poll_events){
-                ele.second();
+                ele.second(ele.first);
             }
         }
     }
 
 }
 
-int ThreadedPollerModule::sampleFunction(int a) {
+int ThreadedPollerModule::sampleFunction(struct PollerStruct ps) {
+
+    int fd = ps.poll_fd;
+    sockaddr_in addr = ps.poll_addr;
+    socklen_t addrSize = sizeof(addr);
+
+    // Clear buffer
+    memset(this->recv_buffer, 0, 4096);
+
+    int bytesRecv = recv(fd, this->recv_buffer, RECV_BUFFER_SIZE, 0);
+
+    printf("recv ret: %d\n", bytesRecv);
+
+    getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
+
+    if (bytesRecv == 0) {
+        //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
+        //Somebody disconnected , get his details and print
+        printf(RED "Host disconnected , ip %s , port %d \n" RESET,
+               inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
+
+        //Close the socket and mark as 0 in list for reuse
+        close(fd);
+        //it2 = (this->client_socket_fds).erase(it2);
+    } else {
+        std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
+
+        this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
+        //resend msg (echo)
+        send(fd, this->recv_buffer, bytesRecv + 1, 0);
+    }
     return 0;
+}
+
+void ThreadedPollerModule::handleReceivedString(std::string basicString, int i, uint16_t i1) {
+
 }
 
 ThreadedPollerModule::~ThreadedPollerModule() = default;

@@ -99,41 +99,17 @@ int ThreadedPollerTCPServer::handleServerListen() {
 
                     //(this->client_socket_fds).push_back(new_socket);
 
-                    struct PollerStruct poll_struct = {.poll_fd = new_socket, .poll_events=POLLIN};
-                    std::string funcName = "sampleFunction";
+                    struct PollerStruct poll_struct = {.poll_fd = new_socket, .poll_events=POLLIN, .poll_addr = addr};
 
+                    std::function<int(struct PollerStruct)> sampleFunc(std::bind(&ThreadedPollerTCPServer::sampleFunction, this, poll_struct));
 
-                    this->register_handler(poll_struct, (&(ThreadedPollerTCPServer::sampleFunction)));
+                    this->register_handler(poll_struct, sampleFunc);
                 }
             }
             int fd = 0;
 
             if (FD_ISSET(fd, &read_fds)) {
-                // Clear buffer
-                memset(this->recv_buffer, 0, 4096);
 
-                int bytesRecv = recv(fd, this->recv_buffer, RECV_BUFFER_SIZE, 0);
-
-                printf("recv ret: %d\n", bytesRecv);
-
-                getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
-
-                if (bytesRecv == 0) {
-                    //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
-                    //Somebody disconnected , get his details and print
-                    printf(RED "Host disconnected , ip %s , port %d \n" RESET,
-                           inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
-
-                    //Close the socket and mark as 0 in list for reuse
-                    close(fd);
-                    it2 = (this->client_socket_fds).erase(it2);
-                } else {
-                    std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
-
-                    this->handleReceivedString(strRecv, bytesRecv, ntohs(addr.sin_port));
-                    //resend msg (echo)
-                    send(fd, this->recv_buffer, bytesRecv + 1, 0);
-                }
             }
         } else printf(YELLOW "Timeout: retry to accept! loop: %d\n" RESET, this->loop);
     }

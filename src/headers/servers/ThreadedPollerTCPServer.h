@@ -22,6 +22,8 @@ public:
 
     virtual int handleReceivedString(std::string strRecv, int bytesRecv, int port);
 
+    int (ThreadedPollerTCPServer::*x)();
+
 private:
 
     int handleServerListen();

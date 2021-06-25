@@ -8,6 +8,7 @@
 struct PollerStruct {
     int poll_fd;
     short poll_events;
+    sockaddr_in poll_addr;
 
     bool operator<(const PollerStruct& t) const
     {

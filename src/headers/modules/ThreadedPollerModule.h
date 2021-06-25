@@ -19,19 +19,22 @@ public:
 
     bool stop() override;
 
-    int register_handler(const struct PollerStruct& poller_str, const std::function<int(int)>& function_name);
+    int register_handler(const struct PollerStruct& poller_str,  std::function<int(struct PollerStruct)> function_name);
 
     int unregister_handler(int fd_r);
 
-    static int sampleFunction(int a);
+    int sampleFunction(struct PollerStruct ps);
+
 protected:
 
     static void runModule(void *obj_param);
 
 private:
-    std::map<struct PollerStruct, std::function<void()>> pollMap;
+    std::map<struct PollerStruct, std::function<int(struct PollerStruct)>> pollMap;
     std::vector<struct pollfd> poll_fds;
     pthread_mutex_t _poller_mutex;
+
+    void handleReceivedString(std::string basicString, int i, uint16_t i1);
 };
 
 
