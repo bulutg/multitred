@@ -113,7 +113,8 @@ int ThreadedPollerTCPServer::newSocketAcceptFunction(struct PollerStruct ps) {
 
         struct PollerStruct poll_struct = {.poll_fd = new_socket, .poll_events=POLLIN, .poll_addr = addr};
 
-        std::function<int(struct PollerStruct)> recvFunc = std::bind(&ThreadedPollerTCPServer::receiveFromSocketFunction, this, std::placeholders::_1);
+        std::function<int(struct PollerStruct)> recvFunc = std::bind(
+                &ThreadedPollerTCPServer::receiveFromSocketFunction, this, std::placeholders::_1);
 
         this->register_handler(poll_struct, recvFunc);
     }

@@ -10,13 +10,9 @@ void ThreadedTCPClient::runClient(void *obj_param) {
     ThreadedTCPClient *tcpClient = ((ThreadedTCPClient *) obj_param);
     pid_t process_id = getpid();
 
-//    struct timeval tv;
-//    tv.tv_sec = (long) 5;
-//    tv.tv_usec = 0;
-
     tcpClient->master_socketFD = socket(AF_INET, SOCK_STREAM, 0);
     if (tcpClient->master_socketFD != -1) {
-        std::string alert = "Client:" + std::to_string(process_id) +" SOCKET CREATED!\n";
+        std::string alert = "Client:" + std::to_string(process_id) + " SOCKET CREATED!\n";
         printf(YELLOW);
         printf("%s", alert.c_str());
         printf(RESET);
@@ -40,7 +36,7 @@ void ThreadedTCPClient::runClient(void *obj_param) {
 
                 do {
                     if (send(tcpClient->master_socketFD, userInput.c_str(), userInput.size() + 1, 0) != -1) {
-                        
+
                         // wait for response
                         memset(tcpClient->recv_buffer, 0, RECV_BUFFER_SIZE);
 
@@ -49,7 +45,7 @@ void ThreadedTCPClient::runClient(void *obj_param) {
 
                             std::string strRecv = std::string(tcpClient->recv_buffer, bytesRecv);
 
-                            printf(GREEN "Client%sReceived> %s\n" RESET, client_pid.c_str(),  strRecv.c_str());
+                            printf(GREEN "Client%sReceived> %s\n" RESET, client_pid.c_str(), strRecv.c_str());
                         } else printf(RED "Client%s there was a connection issue\n" RESET, client_pid.c_str());
                     } else printf(RED "Client%s: Cannot send to server!\n" RESET, client_pid.c_str());
                     sleep(5);
