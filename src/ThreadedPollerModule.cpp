@@ -62,8 +62,13 @@ void ThreadedPollerModule::runModule(void *obj_param) {
     int ret;
 
     while (module->loop) {
+       // printf(RED "BEFORE POLL\n" RESET);
+
+    //    for (int i = 0; i < (module->poll_fds).size(); i++) printf(RED "fd%d event%d revent%d\n" RESET, (module->poll_fds)[i].fd, (module->poll_fds)[i].events, (module->poll_fds)[i].revents);
         pthread_mutex_lock(&(module->_poller_mutex));
-        ret = poll((module->poll_fds).data(), (module->poll_fds).size(), TIMEOUT * 1000);
+
+        pollfd* poll_arr = module->poll_fds.data();
+        ret = poll(poll_arr, (module->poll_fds).size(), TIMEOUT * 1000);
         pthread_mutex_unlock(&(module->_poller_mutex));
         if (ret == -1) {
             printf(RED "poll err\n" RESET);
@@ -71,16 +76,22 @@ void ThreadedPollerModule::runModule(void *obj_param) {
         if (!ret) {
             printf(RESET"%d seconds elapsed.\n" RESET, TIMEOUT);
         }
-
-        for (auto & ele : module->pollMap) {
-            auto it = find_if(begin(module->poll_fds), end(module->poll_fds), [=] (struct pollfd const& f) {
-                return (f.fd == ele.first.poll_fd);
+        for (auto outer_iterator = module->pollMap.cbegin(); outer_iterator != module->pollMap.cend();){
+            auto inner_iterator = find_if(begin(module->poll_fds), end(module->poll_fds), [=] (struct pollfd const& f) {
+                return (f.fd == outer_iterator->first.poll_fd);
             });
-            bool found = (it != end(module->poll_fds));
-            if (found && it->revents == ele.first.poll_events){
-                ele.second(ele.first);
+            printf(GREEN "%d\n" RESET,(inner_iterator->revents & outer_iterator->first.poll_events));
+            if (inner_iterator != end(module->poll_fds)) if (inner_iterator->revents & outer_iterator->first.poll_events){
+                outer_iterator->second(outer_iterator->first);
+                //module->pollMap.erase(outer_iterator++);
+                //continue;
             }
+            ++outer_iterator;
         }
+       // printf(GREEN "After POLL\n" RESET);
+
+       // for (int i = 0; i < (module->poll_fds).size(); i++)printf(RED "fd%d event%d revent%d\n" RESET, (module->poll_fds)[i].fd, (module->poll_fds)[i].events, (module->poll_fds)[i].revents);
+        sleep(1);
     }
 
 }

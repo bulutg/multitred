@@ -22,9 +22,9 @@ public:
 
     virtual int handleReceivedString(std::string strRecv, int bytesRecv, int port);
 
-    int sampleFunction(struct PollerStruct ps);
+    int receiveFromSocketFunction(struct PollerStruct ps);
 
-    int sampleFunctionMaster(struct PollerStruct ps);
+    int newSocketAcceptFunction(struct PollerStruct ps);
 
 private:
 

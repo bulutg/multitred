@@ -8,7 +8,6 @@
 #include "src/headers/servers/ThreadedPollerTCPServer.h"
 
 ThreadedPollerTCPServer* server;
-ThreadedPollerModule* pollerModule;
 
 sig_atomic_t volatile g_running = 1;
 
@@ -31,16 +30,12 @@ int main(int argc,char* argv[]) {
     sigaction(SIGINT, &sa, nullptr);
 
     server = new ThreadedPollerTCPServer(0, 54011);
-    pollerModule = new ThreadedPollerModule(3);
 
     server->start();
-    pollerModule->start();
 
     while (g_running) pause();
     printf("exiting safely from while loop\n");
 
-
-    pollerModule->stop();
     server->stop();
     printf("--s1 stopped\n");
 
