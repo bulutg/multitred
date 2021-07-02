@@ -18,8 +18,6 @@ public:
 
     bool stop() override;
 
-    static void runServer(void *obj_param);
-
     virtual int handleReceivedString(std::string strRecv, int bytesRecv, int port);
 
     int receiveFromSocketFunction(struct PollerStruct ps);
@@ -33,8 +31,6 @@ private:
     int acceptTimeout;
 
     std::string currentFileName;
-
-    std::list<int> client_socket_fds;
 
 protected:
     int server_port;

@@ -39,7 +39,7 @@ int main() {
 //    client1 = new ThreadedModule(1);
 //    client2 = new ThreadedModule(2);
 
-    tcp_client = new ThreadedTCPClient(3, 54011);
+    tcp_client = new ThreadedTCPClient(3, 54111);
 
 //    server->start();
 //    client1->start();

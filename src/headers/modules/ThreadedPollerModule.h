@@ -28,7 +28,6 @@ protected:
 
     static void runModule(void *obj_param);
 
-private:
     std::map<struct PollerStruct, std::function<int(struct PollerStruct)>> pollMap;
     std::vector<struct pollfd> poll_fds;
     pthread_mutex_t _poller_mutex;

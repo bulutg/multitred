@@ -67,28 +67,25 @@ void ThreadedPollerModule::runModule(void *obj_param) {
         pollfd *poll_arr = module->poll_fds.data();
         ret = poll(poll_arr, (module->poll_fds).size(), TIMEOUT * 1000);
         pthread_mutex_unlock(&(module->_poller_mutex));
-        if (ret == -1) {
-            printf(RED "poll err\n" RESET);
-        }
-        if (!ret) {
-            printf(RESET"%d seconds elapsed.\n" RESET, TIMEOUT);
-        }
+
+        if (ret == -1) printf(RED "poll err\n" RESET);
+        if (!ret) printf(RESET"%d seconds elapsed.\n" RESET, TIMEOUT);
+
         for (auto outer_iterator = module->pollMap.cbegin(); outer_iterator != module->pollMap.cend();) {
             auto inner_iterator = find_if(begin(module->poll_fds), end(module->poll_fds), [=](struct pollfd const &f) {
                 return (f.fd == outer_iterator->first.poll_fd);
             });
-            printf(GREEN "%d\n" RESET, (inner_iterator->revents & outer_iterator->first.poll_events));
-            if (inner_iterator != end(module->poll_fds))
-                if (inner_iterator->revents & outer_iterator->first.poll_events) {
+
+            if ( inner_iterator != end(module->poll_fds) )
+                if (inner_iterator->revents & outer_iterator->first.poll_events)
                     outer_iterator->second(outer_iterator->first);
-                }
+
             ++outer_iterator;
         }
         sleep(1);
     }
 
 }
-
 
 void ThreadedPollerModule::handleReceivedString(std::string basicString, int i, uint16_t i1) {
 

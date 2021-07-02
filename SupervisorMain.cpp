@@ -41,7 +41,7 @@ int main(int argc,char* argv[]) {
     partner_vec.push_back(p2);
     partner_vec.push_back(p3);
 
-    server = new ThreadedTCPServerKeepPartnersAlive(0, 54011, partner_vec);
+    server = new ThreadedTCPServerKeepPartnersAlive(0, 54111, partner_vec);
 
     server->start();
 
