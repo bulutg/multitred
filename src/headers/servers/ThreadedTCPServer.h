@@ -6,7 +6,7 @@
 #define SIYAH1_THREADEDTCPSERVER_H
 
 #include "../modules/ThreadedModule.h"
-#include "../helpers/ParseHelper.h"
+
 
 class ThreadedTCPServer : public ThreadedModule {
 public:

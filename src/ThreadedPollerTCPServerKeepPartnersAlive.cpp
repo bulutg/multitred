@@ -1,11 +1,11 @@
 //
-// Created by Bulut Gözübüyük on 8.06.2021.
+// Created by blt on 7/12/21.
 //
 
-#include "headers/servers/ThreadedTCPServerKeepPartnersAlive.h"
+#include "headers/servers/ThreadedPollerTCPServerKeepPartnersAlive.h"
 
-void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
-    ThreadedTCPServerKeepPartnersAlive *tcpServer = ((ThreadedTCPServerKeepPartnersAlive *) obj_param);
+void ThreadedPollerTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
+    ThreadedPollerTCPServerKeepPartnersAlive *tcpServer = ((ThreadedPollerTCPServerKeepPartnersAlive *) obj_param);
     bool restart;
     while (tcpServer->loop) {
         restart = false;
@@ -38,29 +38,7 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
 
             sleep(1);
 
-            std::vector<std::string> vect;
-
-            vect.push_back("sh");
-            vect.push_back("parsed_ss.sh");
-
-            std::string result = execGetOutput(vect);
-
-            std::string colon = ":";
-            std::string space = " ";
-            std::string pid = "pid=";
-            std::string comma = ",";
-            printf(GREEN "PARSED PORT AND PID\n" RESET);
-
-            std::string s;
-            std::istringstream f(result);
-
-            while (getline(f, s)) {
-                std::string prt = s.substr(s.find(colon) + 1, s.find(space) - s.find(colon) - 1);
-                s.erase(0, s.find(pid) + pid.length());
-                std::string pidno = s.substr(0, s.find(comma));
-                printf(RED "Port> %s matches Pid> %s \n" RESET, prt.c_str(), pidno.c_str());
-                (tcpServer->portPidMap).insert({std::stoi(prt), std::stoi(pidno)});
-            }
+            ssFillMap(tcpServer);
 
             pthread_mutex_unlock(&(tcpServer->_timer_mutex));
         }
@@ -74,14 +52,42 @@ void ThreadedTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param) {
     }
 }
 
-ThreadedTCPServerKeepPartnersAlive::ThreadedTCPServerKeepPartnersAlive(int id, int port,
-                                                                       std::vector<struct Partner> partner_vec)
-        : ThreadedTCPServer(id, port) {
-    pthread_mutex_init(&(this->_timer_mutex), NULL);
-    this->partners = std::move(partner_vec);
+void ThreadedPollerTCPServerKeepPartnersAlive::ssFillMap(ThreadedPollerTCPServerKeepPartnersAlive *tcpServer) {
+    std::vector<std::string> vect;
+
+    vect.push_back("sh");
+    vect.push_back("parsed_ss.sh");
+
+    std::string result = execGetOutput(vect);
+
+    std::string colon = ":";
+    std::string space = " ";
+    std::string pid = "pid=";
+    std::string comma = ",";
+    printf(GREEN "PARSED PORT AND PID\n" RESET);
+
+    std::string s;
+    std::istringstream f(result);
+
+    while (getline(f, s)) {
+        std::string prt = s.substr(s.find(colon) + 1, s.find(space) - s.find(colon) - 1);
+        s.erase(0, s.find(pid) + pid.length());
+        std::string pidno = s.substr(0, s.find(comma));
+        printf(RED "Port> %s matches Pid> %s \n" RESET, prt.c_str(), pidno.c_str());
+        (tcpServer->portPidMap).insert({std::stoi(prt), std::stoi(pidno)});
+    }
 }
 
-int ThreadedTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv, int bytesRecv, int port) {
+ThreadedPollerTCPServerKeepPartnersAlive::ThreadedPollerTCPServerKeepPartnersAlive(int id,
+                                                                                   int port,
+                                                                                   std::vector<struct Partner> partner_vec)
+        : ThreadedPollerTCPServer(id, port) {
+    pthread_mutex_init(&(this->_timer_mutex), NULL);
+    this->partners = std::move(partner_vec);
+
+}
+
+int ThreadedPollerTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv, int bytesRecv, int port) {
     strRecv.erase(std::remove(strRecv.begin(), strRecv.end(), '\n'), strRecv.end());
     printf(GREEN "KCA: Server Received: %s Loop %d\n" RESET, strRecv.c_str(), this->loop);
 
@@ -106,19 +112,20 @@ int ThreadedTCPServerKeepPartnersAlive::handleReceivedString(std::string strRecv
     return 0;
 }
 
-bool ThreadedTCPServerKeepPartnersAlive::start() {
-    ThreadedTCPServer::start();
+bool ThreadedPollerTCPServerKeepPartnersAlive::start() {
+    ThreadedPollerTCPServer::start();
     return pthread_create(&_timer_thread, NULL, reinterpret_cast<void *(*)(void *)>(runPartnerChecker), this);
 }
 
-bool ThreadedTCPServerKeepPartnersAlive::stop() {
-    ThreadedTCPServer::stop();
+bool ThreadedPollerTCPServerKeepPartnersAlive::stop() {
+    ThreadedPollerTCPServer::stop();
     (void) pthread_join(_timer_thread, nullptr);
     while (wait(NULL) > 0) {}
     return false;
 }
 
-pid_t ThreadedTCPServerKeepPartnersAlive::startPartner(const struct Partner &partner) {
+
+pid_t ThreadedPollerTCPServerKeepPartnersAlive::startPartner(const struct Partner &partner) {
     pid_t child_pid = fork();
 
     char *appName = const_cast<char *>((partner.exec_str).c_str());

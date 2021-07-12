@@ -19,7 +19,9 @@
 #include <list>
 #include <csignal>
 #include <sys/poll.h>
-
+#include "../helpers/ParseHelper.h"
+#include "../helpers/ExecHelper.h"
+#include "../components/Partner.h"
 
 #include "../components/SafeQueue.h"
 #include "../components/CircularBuffer.h"

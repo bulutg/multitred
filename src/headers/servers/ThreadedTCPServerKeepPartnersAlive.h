@@ -6,7 +6,7 @@
 #define SIYAH1_THREADEDTCPSERVERKEEPPARTNERSALIVE_H
 
 #include "ThreadedTCPServer.h"
-#include "../components/Partner.h"
+
 
 class ThreadedTCPServerKeepPartnersAlive : public ThreadedTCPServer {
 public:

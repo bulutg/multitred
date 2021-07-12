@@ -66,7 +66,7 @@ bool ThreadedTCPClient::start() {
 
 bool ThreadedTCPClient::stop() {
     printf("TCP Client Close Called.\n");
-    close(this->master_socketFD);
+    ThreadedModule::stop();
     printf("Client socket closed.\n");
-    return ThreadedModule::stop();
+    return close(this->master_socketFD);
 }
