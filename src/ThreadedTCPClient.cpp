@@ -31,7 +31,8 @@ void ThreadedTCPClient::runClient(void *obj_param) {
         // Connect to server
 
         do {
-            if (connect(tcpClient->master_socketFD, (sockaddr *) &hint, sizeof(hint)) != -1) {
+            tcpClient->connected = connect(tcpClient->master_socketFD, (sockaddr *) &hint, sizeof(hint));
+            if (tcpClient->connected != -1) {
                 printf(GREEN "Client: Connected!\n" RESET);
 
                 do {
@@ -67,6 +68,14 @@ bool ThreadedTCPClient::start() {
 bool ThreadedTCPClient::stop() {
     printf("TCP Client Close Called.\n");
     ThreadedModule::stop();
-    printf("Client socket closed.\n");
+
+    if (this->master_socketFD != -1) {
+        std::string userInput = "dead";
+
+        if (this->connected != -1) {
+            printf(GREEN "Client: Connected!\n" RESET);
+            send(this->master_socketFD, userInput.c_str(), userInput.size() + 1, 0);
+        }
+    }
     return close(this->master_socketFD);
 }

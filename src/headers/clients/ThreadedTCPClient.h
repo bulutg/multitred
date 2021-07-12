@@ -21,6 +21,8 @@ protected:
 
     int client_port;
 
+    int connected;
+
 };
 
 

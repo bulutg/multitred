@@ -1,13 +1,9 @@
 #include <unistd.h>
 #include <csignal>
 #include <string>
-#include "src/headers/servers/JsonThreadedTCPServer.h"
 #include "src/headers/clients/ThreadedTCPClient.h"
 
-//JsonThreadedTCPServer* server;
 ThreadedTCPClient* tcp_client;
-//ThreadedModule* client1;
-//ThreadedModule* client2;
 
 sig_atomic_t volatile g_running = 1;
 
@@ -35,36 +31,16 @@ int main() {
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
-//    server = new JsonThreadedTCPServer(0, 54001);
-//    client1 = new ThreadedModule(1);
-//    client2 = new ThreadedModule(2);
-
     tcp_client = new ThreadedTCPClient(3, 54111);
-
-//    server->start();
-//    client1->start();
-//    client2->start();
-//
-//    server->setModules(client1, client2);
 
     tcp_client->start();
 
     while (g_running) pause();
+
     printf(YELLOW "exiting safely from while loop\n" RESET);
 
     tcp_client->stop();
 
-//    server->stop();
-//    printf("--s1 stopped\n");
-//    client1->stop();
-//    printf("--c1 stopped\n");
-//    client2->stop();
-//    printf("--c2 stopped\n");
-//
-//    printf("--will del pointers\n");
-//    delete server;
-//    delete client1;
-//    delete client2;
     delete tcp_client;
     printf("--deleted pointers\n");
 
