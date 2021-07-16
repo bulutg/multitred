@@ -31,7 +31,7 @@ int main() {
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
-    tcp_client = new ThreadedTCPClient(3, 54111);
+    tcp_client = new ThreadedTCPClient(3, 54112);
 
     tcp_client->start();
 

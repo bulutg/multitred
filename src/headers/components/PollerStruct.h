@@ -2,8 +2,8 @@
 // Created by blt on 6/16/21.
 //
 
-#ifndef SIYAH1_PARTNER_H
-#define SIYAH1_PARTNER_H
+#ifndef SIYAH1_POLLERSTRUCT_H
+#define SIYAH1_POLLERSTRUCT_H
 
 struct PollerStruct {
     int poll_fd;

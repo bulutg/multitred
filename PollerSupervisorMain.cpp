@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <csignal>
 #include <string>
-#include "src/headers/servers/ThreadedPollerTCPServer.h"
+#include "src/headers/servers/ThreadedPollerTCPServerKeepPartnersAlive.h"
 
-ThreadedPollerTCPServer* server;
+ThreadedPollerTCPServerKeepPartnersAlive* server;
 
 sig_atomic_t volatile g_running = 1;
 
@@ -29,7 +29,19 @@ int main(int argc,char* argv[]) {
     sa.sa_handler = handle;
     sigaction(SIGINT, &sa, nullptr);
 
-    server = new ThreadedPollerTCPServer(0, 54111);
+    std::vector<struct Partner> partner_vec;
+
+    struct Partner p1, p2, p3;
+
+    p1 = {.exec_str = "/home/blt/CLionProjects/tredmred/Partner", .param = ""};
+    p2 = {.exec_str = "/home/blt/CLionProjects/tredmred/Partner", .param = ""};
+    p3 = {.exec_str = "/home/blt/CLionProjects/tredmred/Partner", .param = ""};
+
+    partner_vec.push_back(p1);
+    partner_vec.push_back(p2);
+    partner_vec.push_back(p3);
+
+    server = new ThreadedPollerTCPServerKeepPartnersAlive(0, 54112, partner_vec);
 
     server->start();
 

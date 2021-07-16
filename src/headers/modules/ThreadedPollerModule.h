@@ -19,7 +19,7 @@ public:
 
     bool stop() override;
 
-    int register_handler(const struct PollerStruct& poller_str,  std::function<int(struct PollerStruct)> function_name);
+    int register_handler(const struct PollerStruct& poller_str,  const std::function<int(struct PollerStruct)>& function_name);
 
     int unregister_handler(int fd_r);
 

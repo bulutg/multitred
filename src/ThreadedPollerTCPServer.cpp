@@ -70,16 +70,13 @@ int ThreadedPollerTCPServer::receiveFromSocketFunction(struct PollerStruct ps) {
     getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
 
     if (bytesRecv == 0) {
-        //getpeername(fd, (struct sockaddr *) &addr, (socklen_t *) &addrSize);
         //Somebody disconnected , get his details and print
         printf(RED "Host disconnected , ip %s , port %d \n" RESET,
                inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
-        //Close the socket and mark as 0 in list for reuse
         close(fd);
-        //TODO
+
         this->unregister_handler(fd);
-        //it2 = (this->client_socket_fds).erase(it2);
     } else {
         std::string strRecv = std::string(this->recv_buffer, 0, bytesRecv);
 

@@ -91,7 +91,10 @@ int ThreadedPollerTCPServerKeepPartnersAlive::handleReceivedString(std::string s
     strRecv.erase(std::remove(strRecv.begin(), strRecv.end(), '\n'), strRecv.end());
     printf(GREEN "KCA: Server Received: %s Loop %d\n" RESET, strRecv.c_str(), this->loop);
 
-    if (strRecv == "heartbeat") {
+    if (strRecv == "dead") {
+        printf(GREEN "Partner is dead, received dead msg from port %d!\n" RESET, port);
+    }
+    else if (strRecv == "heartbeat") {
         printf(GREEN "Partner is alive, received heartbeat from port %d!\n" RESET, port);
         pthread_mutex_lock(&(this->_timer_mutex));
 

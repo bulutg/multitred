@@ -10,7 +10,7 @@ ThreadedPollerModule::ThreadedPollerModule(int id) : ThreadedModule(id) {
 }
 
 int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str,
-                                           std::function<int(struct PollerStruct)> function_name) {
+                                           const std::function<int(struct PollerStruct)>& function_name) {
     struct pollfd new_pollfd{};
     new_pollfd.fd = poller_str.poll_fd;
     new_pollfd.events = poller_str.poll_events;
@@ -23,27 +23,27 @@ int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str
 }
 
 int ThreadedPollerModule::unregister_handler(int fd_r) {
-    std::vector<struct pollfd>::iterator it;
-
-    pthread_mutex_lock(&(this->_poller_mutex));
-
-    for (it = this->poll_fds.begin(); it != this->poll_fds.end();) {
+    for (auto it = this->poll_fds.begin(); it != this->poll_fds.end();) {
         if (it->fd == fd_r) {
+            pthread_mutex_lock(&(this->_poller_mutex));
             this->poll_fds.erase(it);
+            pthread_mutex_unlock(&(this->_poller_mutex));
             break;
         } else it++;
     }
 
-    auto mit = this->pollMap.cbegin();
-
-    while (mit != this->pollMap.end()) {
+    for (auto mit = this->pollMap.begin(); mit != this->pollMap.end();) {
         if (mit->first.poll_fd == fd_r) {
+            pthread_mutex_lock(&(this->_poller_mutex));
             this->pollMap.erase(mit);
+            pthread_mutex_unlock(&(this->_poller_mutex));
             break;
         } else ++mit;
     }
 
-    pthread_mutex_unlock(&(this->_poller_mutex));
+
+    printf(GREEN "UNREGISTERED\n" RESET);
+
     return 0;
 }
 
@@ -71,6 +71,7 @@ void ThreadedPollerModule::runModule(void *obj_param) {
         if (ret == -1) printf(RED "poll err\n" RESET);
         if (!ret) printf(RESET"%d seconds elapsed.\n" RESET, TIMEOUT);
 
+        //pthread_mutex_lock(&(module->_poller_mutex));
         for (auto outer_iterator = module->pollMap.cbegin(); outer_iterator != module->pollMap.cend();) {
             auto inner_iterator = find_if(begin(module->poll_fds), end(module->poll_fds), [=](struct pollfd const &f) {
                 return (f.fd == outer_iterator->first.poll_fd);
@@ -82,6 +83,7 @@ void ThreadedPollerModule::runModule(void *obj_param) {
 
             ++outer_iterator;
         }
+        //pthread_mutex_unlock(&(module->_poller_mutex));
         sleep(1);
     }
 
