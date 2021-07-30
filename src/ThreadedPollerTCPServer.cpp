@@ -74,7 +74,7 @@ int ThreadedPollerTCPServer::receiveFromSocketFunction(struct PollerStruct ps) {
         printf(RED "Host disconnected , ip %s , port %d \n" RESET,
                inet_ntoa(addr.sin_addr), ntohs(addr.sin_port));
 
-        close(fd);
+        //close(fd);
 
         this->unregister_handler(fd);
     } else {

@@ -9,6 +9,9 @@ void ThreadedPollerTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param
     bool restart;
     while (tcpServer->loop) {
         restart = false;
+
+        pthread_mutex_lock(&(tcpServer->_timer_mutex));
+
         for (auto &it : tcpServer->pidTimerMap) {
             if (it.second > 12) {
                 printf(RED "no response from partner pid: %d\n" RESET, it.first);
@@ -16,10 +19,9 @@ void ThreadedPollerTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param
                 break;
             }
         }
+
         if (restart || tcpServer->pidTimerMap.empty()) {
             printf(RED "no response from partner, deploying partner again..\n" RESET);
-
-            pthread_mutex_lock(&(tcpServer->_timer_mutex));
 
             for (auto &it : tcpServer->pidTimerMap) {
                 pid_t currentPid = it.first;
@@ -37,11 +39,11 @@ void ThreadedPollerTCPServerKeepPartnersAlive::runPartnerChecker(void *obj_param
             }
 
             sleep(1);
-
             ssFillMap(tcpServer);
 
-            pthread_mutex_unlock(&(tcpServer->_timer_mutex));
         }
+
+        pthread_mutex_unlock(&(tcpServer->_timer_mutex));
 
         sleep(1);
         pthread_mutex_lock(&(tcpServer->_timer_mutex));

@@ -23,24 +23,23 @@ int ThreadedPollerModule::register_handler(const struct PollerStruct &poller_str
 }
 
 int ThreadedPollerModule::unregister_handler(int fd_r) {
+    pthread_mutex_lock(&(this->_poller_mutex));
+
     for (auto it = this->poll_fds.begin(); it != this->poll_fds.end();) {
         if (it->fd == fd_r) {
-            pthread_mutex_lock(&(this->_poller_mutex));
             this->poll_fds.erase(it);
-            pthread_mutex_unlock(&(this->_poller_mutex));
             break;
         } else it++;
     }
 
     for (auto mit = this->pollMap.begin(); mit != this->pollMap.end();) {
         if (mit->first.poll_fd == fd_r) {
-            pthread_mutex_lock(&(this->_poller_mutex));
             this->pollMap.erase(mit);
-            pthread_mutex_unlock(&(this->_poller_mutex));
             break;
         } else ++mit;
     }
 
+    pthread_mutex_unlock(&(this->_poller_mutex));
 
     printf(GREEN "UNREGISTERED\n" RESET);
 
@@ -66,24 +65,22 @@ void ThreadedPollerModule::runModule(void *obj_param) {
 
         pollfd *poll_arr = module->poll_fds.data();
         ret = poll(poll_arr, (module->poll_fds).size(), TIMEOUT * 1000);
-        pthread_mutex_unlock(&(module->_poller_mutex));
 
         if (ret == -1) printf(RED "poll err\n" RESET);
         if (!ret) printf(RESET"%d seconds elapsed.\n" RESET, TIMEOUT);
 
-        //pthread_mutex_lock(&(module->_poller_mutex));
-        for (auto outer_iterator = module->pollMap.cbegin(); outer_iterator != module->pollMap.cend();) {
+        for (auto const& outer_iterator : module->pollMap) {
             auto inner_iterator = find_if(begin(module->poll_fds), end(module->poll_fds), [=](struct pollfd const &f) {
-                return (f.fd == outer_iterator->first.poll_fd);
+                return (f.fd == outer_iterator.first.poll_fd);
             });
 
-            if ( inner_iterator != end(module->poll_fds) )
-                if (inner_iterator->revents & outer_iterator->first.poll_events)
-                    outer_iterator->second(outer_iterator->first);
-
-            ++outer_iterator;
+            if ( inner_iterator != module->poll_fds.end() )
+                if (inner_iterator->revents & outer_iterator.first.poll_events)
+                    // Call requested function on event
+                    printf(RED "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n" RESET);
+                    outer_iterator.second(outer_iterator.first);
         }
-        //pthread_mutex_unlock(&(module->_poller_mutex));
+        pthread_mutex_unlock(&(module->_poller_mutex));
         sleep(1);
     }
 
